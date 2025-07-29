@@ -87,6 +87,8 @@ MVP 聚焦於：
 
 ## 6. API 契約
 
+所有 API 端點使用 **Zod** 進行請求與回應的 schema 驗證，確保類型安全。
+
 ### 6.1 產生投影片 — `POST /api/v1/slides`
 
 ```jsonc
@@ -163,18 +165,24 @@ Rules:
 
 ## 10. 技術選型
 
-- **Next.js 15** + TypeScript 5。
+- **Next.js 15** + **TypeScript 5 (strict mode)**。
+- **套件管理**：pnpm（更快的依賴安裝與磁碟空間節省）。
+- **樣式系統**：Tailwind CSS v4（最新版本，改進的設計系統）。
+- **UI 組件庫**：shadcn/ui（高度可客製化的組件系統）。
+- **表單驗證**：Zod（類型安全的 schema 驗證）。
 - **編輯器**：`<textarea>` + `highlight.js`（輕量），日後可升級 Monaco。
 - **Marp Core**：`@marp-team/marp-core` 用 dynamic import 以確保 SSR 安全。
 - **匯出**：Route Handler 內使用 `pptxgenjs`（Node 環境）；未來 PDF 使用 headless Chromium。
 - **狀態管理**：React Context 儲存設定；Zustand 保存編輯內容。
 - **測試**：Vitest（單元測試、API 測試）、Playwright（E2E）。
+- **程式碼品質**：ESLint（語法檢查）+ Prettier（格式化）。
 
 ## 11. 部署
 
 - Node 20 LTS。
-- `Dockerfile` 基底 `node:20-alpine`。
-- CI：GitHub Actions —— Lint、單元測試、建置、部署至 Vercel 或 Container Registry。
+- **套件管理**：使用 pnpm 進行依賴安裝（`pnpm install`）。
+- `Dockerfile` 基底 `node:20-alpine`，預裝 pnpm。
+- CI：GitHub Actions —— Lint（ESLint + Prettier）、單元測試、建置、部署至 Vercel 或 Container Registry。
 
 ## 12. 測試計畫
 
