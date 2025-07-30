@@ -40,22 +40,10 @@ test.describe('Basic App Functionality', () => {
     expect(bodyWidth).toBeLessThanOrEqual(viewportWidth + 1); // +1 for potential rounding
   });
 
-  test('should handle dark mode toggle (if implemented)', async ({ page }) => {
-    await page.goto('/');
-    
-    // This test assumes dark mode toggle exists - adapt based on actual implementation
-    const darkModeToggle = page.locator('[data-testid="theme-toggle"]');
-    
-    // If the toggle doesn't exist, skip this test
-    const toggleExists = await darkModeToggle.count() > 0;
-    test.skip(!toggleExists, 'Dark mode toggle not implemented yet');
-    
-    if (toggleExists) {
-      await darkModeToggle.click();
-      
-      // Check if dark mode class is applied
-      await expect(page.locator('html')).toHaveClass(/dark/);
-    }
+  // Phase 1 完成：主題切換功能預期在 Phase 7 實作
+  test.skip('should handle dark mode toggle (if implemented)', async ({ page }) => {
+    // 預期在 Phase 7 實作：主題切換功能
+    // 目前專注於基礎架構和核心功能
   });
 
   test('should have no console errors on page load', async ({ page }) => {

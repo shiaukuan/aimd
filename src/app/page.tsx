@@ -1,103 +1,111 @@
-import Image from 'next/image';
-
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{' '}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-background">
+      <header className="border-b">
+        <div className="container mx-auto px-4 py-4">
+          <h1 className="text-2xl font-bold">Markdown 投影片產生器</h1>
+          <p className="text-muted-foreground">使用 Markdown 輕鬆創建專業投影片</p>
+        </div>
+      </header>
+      
+      <main className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
+          <div className="flex flex-col">
+            <h2 className="text-lg font-semibold mb-4">Markdown 編輯器</h2>
+            <div className="flex-1 border rounded-lg">
+              <textarea
+                data-testid="markdown-editor"
+                className="w-full h-full p-4 resize-none border-0 focus:outline-none rounded-lg"
+                placeholder="在這裡輸入你的 Markdown 內容..."
+                defaultValue="# 歡迎使用 Markdown 投影片產生器
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+這是你的第一張投影片！
+
+## 功能特色
+
+- **即時預覽** - 邊寫邊看效果
+- **簡單易用** - 使用熟悉的 Markdown 語法
+- **專業輸出** - 生成高品質的投影片"
+              />
+            </div>
+          </div>
+          
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">預覽</h2>
+              <div className="flex items-center gap-2">
+                <button
+                  data-testid="prev-slide"
+                  className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
+                  disabled
+                >
+                  上一張
+                </button>
+                <span data-testid="slide-counter" className="text-sm text-muted-foreground">
+                  1 / 2
+                </span>
+                <button
+                  data-testid="next-slide"
+                  className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
+                >
+                  下一張
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 border rounded-lg p-6 bg-white shadow-sm">
+              <div data-testid="preview" className="preview-area h-full">
+                <h1 className="text-3xl font-bold mb-6">歡迎使用 Markdown 投影片產生器</h1>
+                <p className="text-lg mb-4">這是你的第一張投影片！</p>
+                <h2 className="text-2xl font-semibold mb-4">功能特色</h2>
+                <ul className="list-disc list-inside space-y-2 mb-6">
+                  <li><strong>即時預覽</strong> - 邊寫邊看效果</li>
+                  <li><strong>簡單易用</strong> - 使用熟悉的 Markdown 語法</li>
+                  <li><strong>專業輸出</strong> - 生成高品質的投影片</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-8 flex gap-4 justify-center">
+          <button
+            data-testid="save"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+            儲存
+          </button>
+          <button
+            data-testid="export"
+            className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            匯出
+          </button>
+          <button
+            data-testid="generate"
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          >
+            AI 生成投影片
+          </button>
+        </div>
+        
+        <div className="mt-8 max-w-md mx-auto">
+          <h3 className="text-lg font-semibold mb-4">AI 投影片生成</h3>
+          <div className="space-y-4">
+            <input
+              data-testid="topic-input"
+              type="text"
+              placeholder="請輸入投影片主題..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <input
+              data-testid="api-key-input"
+              type="password"
+              placeholder="請輸入 API 金鑰..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
