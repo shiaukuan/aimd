@@ -22,7 +22,9 @@
       "Bash(pnpm test:*)",
       "Bash(pnpm playwright:*)",
       "Bash(curl:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(pnpm exec playwright test:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }
