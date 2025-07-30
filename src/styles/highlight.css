@@ -1,0 +1,168 @@
+/* ABOUTME: highlight.js 語法高亮樣式配置檔案 */
+/* ABOUTME: 針對 Markdown 語法提供暗色和亮色主題支援 */
+
+/* Markdown 語法高亮基礎樣式 */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  color: hsl(var(--foreground));
+  background: transparent;
+}
+
+/* 註解 */
+.hljs-comment {
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+}
+
+/* 標題 */
+.hljs-title,
+.hljs-section {
+  color: hsl(var(--primary));
+  font-weight: 600;
+}
+
+/* 強調文字 (粗體/斜體) */
+.hljs-emphasis {
+  color: hsl(var(--foreground));
+  font-style: italic;
+}
+
+.hljs-strong {
+  color: hsl(var(--foreground));
+  font-weight: 700;
+}
+
+/* 程式碼 */
+.hljs-code {
+  color: hsl(var(--destructive));
+  background-color: hsl(var(--muted) / 0.3);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+/* 程式碼區塊 */
+.hljs-meta {
+  color: hsl(var(--muted-foreground));
+}
+
+/* 連結 */
+.hljs-link {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+}
+
+.hljs-symbol {
+  color: hsl(var(--primary));
+}
+
+/* 清單項目 */
+.hljs-bullet {
+  color: hsl(var(--accent-foreground));
+  font-weight: 600;
+}
+
+.hljs-number {
+  color: hsl(var(--accent-foreground));
+  font-weight: 600;
+}
+
+/* 引用 */
+.hljs-quote {
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+  border-left: 4px solid hsl(var(--border));
+  padding-left: 1rem;
+  margin-left: 0;
+}
+
+/* 字串和文字內容 */
+.hljs-string {
+  color: hsl(var(--foreground));
+}
+
+/* 關鍵字 (Markdown 語法標記) */
+.hljs-keyword {
+  color: hsl(var(--primary));
+  font-weight: 500;
+}
+
+/* 屬性 (如圖片 alt 文字) */
+.hljs-attribute {
+  color: hsl(var(--secondary-foreground));
+}
+
+/* 變數 (如連結標題) */
+.hljs-variable {
+  color: hsl(var(--foreground));
+}
+
+/* 函數 (如表格語法) */
+.hljs-function {
+  color: hsl(var(--primary));
+}
+
+/* 型別 (如 YAML front matter) */
+.hljs-type {
+  color: hsl(var(--accent-foreground));
+}
+
+/* 刪除線 */
+.hljs-deletion {
+  color: hsl(var(--muted-foreground));
+  text-decoration: line-through;
+}
+
+/* 水平線 */
+.hljs-doctag {
+  color: hsl(var(--border));
+  font-weight: 600;
+}
+
+/* 特殊字元 */
+.hljs-literal {
+  color: hsl(var(--accent-foreground));
+}
+
+/* 錯誤處理 */
+.hljs-addition {
+  color: hsl(var(--primary));
+  background-color: hsl(var(--primary) / 0.1);
+}
+
+/* 選取範圍樣式 */
+.hljs *::selection {
+  background-color: hsl(var(--primary) / 0.2);
+}
+
+.hljs *::-moz-selection {
+  background-color: hsl(var(--primary) / 0.2);
+}
+
+/* 暗色主題特殊調整 */
+@media (prefers-color-scheme: dark) {
+  .hljs-code {
+    background-color: hsl(var(--muted) / 0.5);
+  }
+  
+  .hljs-quote {
+    border-left-color: hsl(var(--border));
+  }
+}
+
+/* 確保語法高亮層與文字輸入層對齊 */
+.hljs,
+.hljs * {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+}
+
+/* 禁用語法高亮元素的選取 */
+.hljs.pointer-events-none * {
+  pointer-events: none;
+  user-select: none;
+}

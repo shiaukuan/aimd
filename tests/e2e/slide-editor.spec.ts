@@ -122,15 +122,13 @@ console.log('Hello, World!');
   });
 
   test('should support keyboard shortcuts in editor', async ({ page }) => {
-    const markdownEditor = page.locator(
-      'textarea[placeholder*="markdown"], [data-testid="markdown-editor"]'
-    );
+    const markdownEditor = page.getByTestId('editor-textarea');
 
     const hasEditor = (await markdownEditor.count()) > 0;
     test.skip(!hasEditor, 'Markdown editor not implemented yet');
 
     if (hasEditor) {
-      await markdownEditor.focus();
+      await markdownEditor.selectText();
       await markdownEditor.fill('Some text to test shortcuts');
 
       // Test Ctrl+A (Select All)

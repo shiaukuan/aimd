@@ -156,7 +156,7 @@ test.describe('Split Panel功能', () => {
   });
 
   test('編輯器和預覽功能應該正常工作', async ({ page }) => {
-    const editor = page.getByTestId('markdown-editor');
+    const editor = page.getByTestId('editor-textarea');
     const preview = page.getByTestId('preview');
     
     // 檢查編輯器有預設內容

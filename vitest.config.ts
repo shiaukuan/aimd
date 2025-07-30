@@ -10,11 +10,9 @@ export default defineConfig({
   test: {
     // Environment configuration
     environment: 'jsdom',
-    
+
     // Test file patterns (supporting colocation)
-    include: [
-      'src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
-    ],
+    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
@@ -24,10 +22,10 @@ export default defineConfig({
 
     // Setup files
     setupFiles: ['./src/test/setup.ts'],
-    
+
     // Global test configuration
     globals: true,
-    
+
     // Coverage configuration
     coverage: {
       provider: 'v8',
@@ -71,14 +69,14 @@ export default defineConfig({
     testTimeout: 10000,
     hookTimeout: 10000,
   },
-  
+
   // Resolve configuration for path aliases
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
-  
+
   // Define configuration
   define: {
     'import.meta.vitest': undefined,
