@@ -12,7 +12,9 @@ export function EditorStatusBar({
   isModified = false,
   lastSaved = null,
   className,
-  showDetailedStats = true
+  showDetailedStats = true,
+  autoSaveEnabled = true,
+  syncStatus
 }: EditorStatusBarProps) {
   
   const formatLastSaved = (date: Date | null) => {
@@ -118,6 +120,26 @@ export function EditorStatusBar({
           )}
           <span data-testid="save-status">
             {formatLastSaved(lastSaved)}
+          </span>
+        </div>
+
+        {/* 同步狀態 */}
+        {syncStatus && (
+          <div className="flex items-center gap-1">
+            <span className={cn(
+              "w-2 h-2 rounded-full",
+              syncStatus.isSync ? "bg-green-500" : "bg-yellow-500"
+            )} title={syncStatus.isSync ? "已同步" : "同步中"} />
+            <span className="text-xs">
+              {syncStatus.isSync ? "已同步" : "同步中"}
+            </span>
+          </div>
+        )}
+
+        {/* 自動儲存狀態 */}
+        <div className="flex items-center gap-1">
+          <span className="text-muted-foreground/80">
+            {autoSaveEnabled ? "自動儲存" : "手動儲存"}
           </span>
         </div>
 

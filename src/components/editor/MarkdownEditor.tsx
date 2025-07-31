@@ -58,7 +58,7 @@ export const MarkdownEditor = React.forwardRef<
   const lineNumbersRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [isComposing, setIsComposing] = useState(false);
+  const [, setIsComposing] = useState(false);
 
   // 處理輸入變更
   const handleChange = useCallback(
@@ -75,7 +75,7 @@ export const MarkdownEditor = React.forwardRef<
   }, []);
 
   const handleCompositionEnd = useCallback(
-    (e: React.CompositionEvent<HTMLTextAreaElement>) => {
+    () => {
       setIsComposing(false);
     },
     []

@@ -9,6 +9,10 @@ import { EditorPanelProps, EditorStats, EditorAction } from '@/types/editor';
 import { EditorToolbar } from './EditorToolbar';
 import { EditorStatusBar } from './EditorStatusBar';
 import { MarkdownEditor } from './MarkdownEditor';
+import { useEditorStore } from '@/store/editorStore';
+import { useAutoSave } from '@/hooks/useAutoSave';
+import { useDebounce } from '@/hooks/useDebounce';
+import { ErrorBoundaryWrapper } from '@/components/ui/ErrorBoundary';
 
 // 預設編輯器統計
 const DEFAULT_STATS: EditorStats = {
@@ -23,20 +27,54 @@ const DEFAULT_STATS: EditorStats = {
 };
 
 export function EditorPanel({
-  content: initialContent = '',
+  content: propContent,
   placeholder = '在這裡輸入你的 Markdown 內容...',
   readOnly = false,
   className,
   settings,
   callbacks,
 }: EditorPanelProps) {
-  const [content, setContent] = useState(initialContent);
+  // 全域狀態管理
+  const {
+    content: storeContent,
+    updateContent,
+    setContent: setStoreContent,
+    isModified: storeIsModified,
+    lastSaveTime,
+    autoSaveEnabled,
+    error: storeError,
+    isLargeFile,
+    clearError,
+  } = useEditorStore();
+
+  // 本地狀態
   const [stats, setStats] = useState<EditorStats>(DEFAULT_STATS);
-  const [isModified, setIsModified] = useState(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [activeFormats, setActiveFormats] = useState<EditorAction[]>([]);
+  const [activeFormats] = useState<EditorAction[]>([]);
+  const [localContent, setLocalContent] = useState(propContent || '');
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const markdownEditorRef = useRef<HTMLTextAreaElement>(null);
+
+  // 自動儲存 hook
+  const autoSave = useAutoSave({
+    interval: settings?.autoSaveInterval || 30000,
+    key: 'markdown-editor-content',
+    immediate: false,
+    onSave: (content) => {
+      callbacks?.onSave?.(content);
+    },
+    onError: (error) => {
+      console.error('Auto save error:', error);
+    },
+  });
+
+  // 使用 debounce 來同步到全域狀態
+  const { debouncedCallback: debouncedSync } = useDebounce(
+    (content: string) => {
+      updateContent(content);
+    },
+    300 // 固定使用 300ms 同步延遲
+  );
 
   // 計算編輯器統計資訊
   const calculateStats = useCallback(
@@ -57,8 +95,8 @@ export function EditorPanel({
       const textBeforeCursor = text.slice(0, cursorPosition);
       const linesBeforeCursor = textBeforeCursor.split('\n');
       const cursorLine = linesBeforeCursor.length;
-      const cursorColumn =
-        linesBeforeCursor[linesBeforeCursor.length - 1].length + 1;
+      const lastLine = linesBeforeCursor[linesBeforeCursor.length - 1] || '';
+      const cursorColumn = lastLine.length + 1;
 
       return {
         characters,
@@ -80,7 +118,7 @@ export function EditorPanel({
     if (!textarea) return;
 
     const newStats = calculateStats(
-      content,
+      localContent,
       textarea.selectionStart,
       textarea.selectionEnd,
       textarea.selectionStart
@@ -100,13 +138,16 @@ export function EditorPanel({
     if (callbacks?.onCursorChange) {
       callbacks.onCursorChange(newStats.cursorLine, newStats.cursorColumn);
     }
-  }, [content, calculateStats, callbacks]);
+  }, [localContent, calculateStats, callbacks]);
 
   // 處理內容變更
   const handleContentChange = useCallback(
     (newContent: string) => {
-      setContent(newContent);
-      setIsModified(true);
+      // 更新本地狀態
+      setLocalContent(newContent);
+      
+      // 同步到全域狀態 (debounced)
+      debouncedSync(newContent);
 
       // 更新統計資訊
       const textarea = markdownEditorRef.current;
@@ -122,19 +163,24 @@ export function EditorPanel({
         // 呼叫回調函數
         callbacks?.onChange?.(newContent, newStats);
       }
+
+      // 清除錯誤狀態
+      if (storeError) {
+        clearError();
+      }
     },
-    [calculateStats, callbacks]
+    [calculateStats, callbacks, debouncedSync, storeError, clearError]
   );
 
   // 處理工具列動作
   const handleToolbarAction = useCallback(
-    (action: EditorAction, data?: any) => {
+    async (action: EditorAction, data?: any) => {
       const textarea = markdownEditorRef.current;
       if (!textarea) return;
       const { selectionStart, selectionEnd } = textarea;
-      const selectedText = content.slice(selectionStart, selectionEnd);
+      const selectedText = localContent.slice(selectionStart, selectionEnd);
 
-      let newContent = content;
+      let newContent = localContent;
       let newSelectionStart = selectionStart;
       let newSelectionEnd = selectionEnd;
 
@@ -142,9 +188,9 @@ export function EditorPanel({
         case 'bold':
           const boldText = selectedText || '粗體文字';
           newContent =
-            content.slice(0, selectionStart) +
+            localContent.slice(0, selectionStart) +
             `**${boldText}**` +
-            content.slice(selectionEnd);
+            localContent.slice(selectionEnd);
           newSelectionStart = selectionStart + 2;
           newSelectionEnd = newSelectionStart + boldText.length;
           break;
@@ -152,9 +198,9 @@ export function EditorPanel({
         case 'italic':
           const italicText = selectedText || '斜體文字';
           newContent =
-            content.slice(0, selectionStart) +
+            localContent.slice(0, selectionStart) +
             `*${italicText}*` +
-            content.slice(selectionEnd);
+            localContent.slice(selectionEnd);
           newSelectionStart = selectionStart + 1;
           newSelectionEnd = newSelectionStart + italicText.length;
           break;
@@ -162,9 +208,9 @@ export function EditorPanel({
         case 'code':
           const codeText = selectedText || '程式碼';
           newContent =
-            content.slice(0, selectionStart) +
+            localContent.slice(0, selectionStart) +
             `\`${codeText}\`` +
-            content.slice(selectionEnd);
+            localContent.slice(selectionEnd);
           newSelectionStart = selectionStart + 1;
           newSelectionEnd = newSelectionStart + codeText.length;
           break;
@@ -177,10 +223,10 @@ export function EditorPanel({
           const headingText = selectedText || `標題 ${level}`;
           const headingPrefix = '#'.repeat(level) + ' ';
           newContent =
-            content.slice(0, selectionStart) +
+            localContent.slice(0, selectionStart) +
             headingPrefix +
             headingText +
-            content.slice(selectionEnd);
+            localContent.slice(selectionEnd);
           newSelectionStart = selectionStart + headingPrefix.length;
           newSelectionEnd = newSelectionStart + headingText.length;
           break;
@@ -188,9 +234,9 @@ export function EditorPanel({
         case 'bulletList':
           const bulletText = selectedText || '清單項目';
           newContent =
-            content.slice(0, selectionStart) +
+            localContent.slice(0, selectionStart) +
             `- ${bulletText}` +
-            content.slice(selectionEnd);
+            localContent.slice(selectionEnd);
           newSelectionStart = selectionStart + 2;
           newSelectionEnd = newSelectionStart + bulletText.length;
           break;
@@ -198,9 +244,9 @@ export function EditorPanel({
         case 'numberedList':
           const numberedText = selectedText || '清單項目';
           newContent =
-            content.slice(0, selectionStart) +
+            localContent.slice(0, selectionStart) +
             `1. ${numberedText}` +
-            content.slice(selectionEnd);
+            localContent.slice(selectionEnd);
           newSelectionStart = selectionStart + 3;
           newSelectionEnd = newSelectionStart + numberedText.length;
           break;
@@ -209,9 +255,9 @@ export function EditorPanel({
           const linkText = selectedText || '連結文字';
           const linkMarkdown = `[${linkText}](url)`;
           newContent =
-            content.slice(0, selectionStart) +
+            localContent.slice(0, selectionStart) +
             linkMarkdown +
-            content.slice(selectionEnd);
+            localContent.slice(selectionEnd);
           newSelectionStart = selectionStart + linkText.length + 3;
           newSelectionEnd = newSelectionStart + 3; // 選中 "url"
           break;
@@ -220,9 +266,9 @@ export function EditorPanel({
           const altText = selectedText || '圖片描述';
           const imageMarkdown = `![${altText}](image-url)`;
           newContent =
-            content.slice(0, selectionStart) +
+            localContent.slice(0, selectionStart) +
             imageMarkdown +
-            content.slice(selectionEnd);
+            localContent.slice(selectionEnd);
           newSelectionStart = selectionStart + altText.length + 4;
           newSelectionEnd = newSelectionStart + 9; // 選中 "image-url"
           break;
@@ -231,28 +277,31 @@ export function EditorPanel({
           const codeBlockText = selectedText || '程式碼';
           const codeBlock = `\`\`\`\n${codeBlockText}\n\`\`\``;
           newContent =
-            content.slice(0, selectionStart) +
+            localContent.slice(0, selectionStart) +
             codeBlock +
-            content.slice(selectionEnd);
+            localContent.slice(selectionEnd);
           newSelectionStart = selectionStart + 4;
           newSelectionEnd = newSelectionStart + codeBlockText.length;
           break;
 
         case 'save':
-          setLastSaved(new Date());
-          setIsModified(false);
-          callbacks?.onSave?.(content);
+          // 手動儲存：使用編輯器中的實際內容
+          const currentContent = markdownEditorRef.current?.value || localContent;
+          const saveSuccess = await autoSave.save();
+          if (saveSuccess) {
+            callbacks?.onSave?.(currentContent);
+          }
           break;
 
         case 'export':
-          callbacks?.onExport?.(content, 'pptx');
+          callbacks?.onExport?.(localContent, 'pptx');
           break;
 
         case 'new':
           if (confirm('確定要新建文件嗎？未儲存的變更將會丟失。')) {
-            setContent('');
-            setIsModified(false);
-            setLastSaved(null);
+            setLocalContent('');
+            setStoreContent('');
+            autoSave.clearSavedContent();
           }
           break;
 
@@ -263,7 +312,7 @@ export function EditorPanel({
       }
 
       // 更新內容
-      if (newContent !== content) {
+      if (newContent !== localContent) {
         handleContentChange(newContent);
 
         // 恢復選取範圍
@@ -276,7 +325,7 @@ export function EditorPanel({
         }, 0);
       }
     },
-    [content, callbacks, handleContentChange]
+    [localContent, callbacks, handleContentChange, autoSave, setStoreContent]
   );
 
   // 處理鍵盤快捷鍵
@@ -322,58 +371,131 @@ export function EditorPanel({
     [handleToolbarAction]
   );
 
-  // 初始化和清理
+  // 初始化邏輯 - 只執行一次
   useEffect(() => {
-    updateStats();
-  }, [updateStats]);
+    if (isInitialized) return;
 
-  // 監聽內容變化
+    let contentToUse = '';
+    
+    // 優先順序：1. propContent 2. savedContent 3. storeContent
+    if (propContent) {
+      contentToUse = propContent;
+    } else {
+      const { content: savedContent, hasData } = autoSave.loadSavedContent();
+      if (hasData && savedContent) {
+        contentToUse = savedContent;
+      } else if (storeContent) {
+        contentToUse = storeContent;
+      }
+    }
+
+    if (contentToUse && contentToUse !== localContent) {
+      setLocalContent(contentToUse);
+      if (contentToUse !== storeContent) {
+        setStoreContent(contentToUse);
+      }
+    }
+
+    setIsInitialized(true);
+  }, [isInitialized, propContent, storeContent, localContent, autoSave, setStoreContent]);
+
+  // 監聽本地內容變化並同步到全域狀態（避免無限循環）
   useEffect(() => {
-    setContent(initialContent);
-    setIsModified(false);
-  }, [initialContent]);
+    if (isInitialized && localContent !== storeContent) {
+      debouncedSync(localContent);
+    }
+  }, [localContent, isInitialized, storeContent, debouncedSync]);
+
+  // 計算最後儲存時間
+  const lastSaved = lastSaveTime ? new Date(lastSaveTime) : null;
 
   return (
-    <div
-      className={cn(
-        'flex flex-col h-full bg-background border rounded-lg overflow-hidden',
-        className
-      )}
-      data-testid="editor-panel"
+    <ErrorBoundaryWrapper
+      title="編輯器錯誤"
+      description="編輯器遇到錯誤，請嘗試重新載入"
+      onError={(error) => {
+        console.error('Editor panel error:', error);
+        callbacks?.onError?.(error);
+      }}
     >
-      {/* 工具列 */}
-      <EditorToolbar
-        disabled={readOnly}
-        onAction={handleToolbarAction}
-        activeFormats={activeFormats}
-      />
+      <div
+        className={cn(
+          'flex flex-col h-full bg-background border rounded-lg overflow-hidden',
+          className,
+          isLargeFile && 'border-orange-200 dark:border-orange-800'
+        )}
+        data-testid="editor-panel"
+      >
+        {/* 錯誤提示 */}
+        {storeError && (
+          <div className="bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-800 px-4 py-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-red-700 dark:text-red-400">
+                {storeError}
+              </span>
+              <button
+                onClick={clearError}
+                className="text-red-500 hover:text-red-700 text-xs underline"
+              >
+                關閉
+              </button>
+            </div>
+          </div>
+        )}
 
-      {/* 編輯區域 */}
-      <div className="flex-1 relative overflow-hidden">
-        <MarkdownEditor
-          ref={markdownEditorRef}
-          value={content}
-          onChange={handleContentChange}
-          onSelect={updateStats}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          readOnly={readOnly}
-          className="w-full h-full"
-          style={{
-            fontSize: settings?.fontSize ? `${settings.fontSize}px` : undefined,
-            tabSize: settings?.tabSize || 2,
+        {/* 大檔案警告 */}
+        {isLargeFile && (
+          <div className="bg-orange-50 dark:bg-orange-900/20 border-b border-orange-200 dark:border-orange-800 px-4 py-2">
+            <span className="text-sm text-orange-700 dark:text-orange-400">
+              大檔案模式：檔案超過 10,000 字符，部分功能可能受到影響
+            </span>
+          </div>
+        )}
+
+        {/* 標題列 */}
+        <div className="flex items-center justify-between p-3 border-b bg-background">
+          <h2 className="text-lg font-semibold">Markdown 編輯器</h2>
+        </div>
+
+        {/* 工具列 */}
+        <EditorToolbar
+          disabled={readOnly}
+          onAction={handleToolbarAction}
+          activeFormats={activeFormats}
+        />
+
+        {/* 編輯區域 */}
+        <div className="flex-1 relative overflow-hidden">
+          <MarkdownEditor
+            ref={markdownEditorRef}
+            value={localContent}
+            onChange={handleContentChange}
+            onSelect={updateStats}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            readOnly={readOnly}
+            className="w-full h-full"
+            style={{
+              fontSize: settings?.fontSize ? `${settings.fontSize}px` : undefined,
+              tabSize: settings?.tabSize || 2,
+            }}
+            data-testid="markdown-editor"
+          />
+        </div>
+
+        {/* 狀態列 */}
+        <EditorStatusBar
+          stats={stats}
+          isModified={storeIsModified}
+          lastSaved={lastSaved}
+          showDetailedStats={true}
+          autoSaveEnabled={autoSaveEnabled}
+          syncStatus={{
+            isSync: !storeIsModified,
+            lastSyncTime: lastSaveTime,
           }}
-          data-testid="markdown-editor"
         />
       </div>
-
-      {/* 狀態列 */}
-      <EditorStatusBar
-        stats={stats}
-        isModified={isModified}
-        lastSaved={lastSaved}
-        showDetailedStats={true}
-      />
-    </div>
+    </ErrorBoundaryWrapper>
   );
 }

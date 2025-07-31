@@ -103,7 +103,7 @@ describe('EditorPanel', () => {
     });
   });
 
-  it('should call onSave callback when save action is triggered', () => {
+  it('should call onSave callback when save action is triggered', async () => {
     const mockOnSave = vi.fn();
     render(
       <EditorPanel 
@@ -112,9 +112,17 @@ describe('EditorPanel', () => {
       />
     );
     
+    // 等待內容初始化完成
+    const textarea = screen.getByTestId('editor-textarea') as HTMLTextAreaElement;
+    await waitFor(() => {
+      expect(textarea.value).toBe('test content');
+    });
+    
     fireEvent.click(screen.getByTestId('toolbar-save'));
     
-    expect(mockOnSave).toHaveBeenCalledWith('test content');
+    await waitFor(() => {
+      expect(mockOnSave).toHaveBeenCalledWith('test content');
+    });
   });
 
   it('should handle save keyboard shortcut', async () => {

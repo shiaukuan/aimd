@@ -68,11 +68,12 @@ export interface EditorCallbacks {
   onAction?: (action: EditorAction, data?: any) => void;
   onSelectionChange?: (start: number, end: number, selectedText: string) => void;
   onCursorChange?: (line: number, column: number) => void;
+  onError?: (error: Error) => void;
 }
 
 // 編輯器面板屬性
 export interface EditorPanelProps {
-  content: string;
+  content?: string; // 可選，因為現在使用全域狀態
   placeholder?: string;
   readOnly?: boolean;
   className?: string;
@@ -98,7 +99,12 @@ export interface EditorStatusBarProps {
   isModified?: boolean;
   lastSaved?: Date | null;
   className?: string;
-  showDetailedStats?: boolean;
+  showDetailedStats?: boolean;  
+  autoSaveEnabled?: boolean;
+  syncStatus?: {
+    isSync: boolean;
+    lastSyncTime: number | null;
+  };
 }
 
 // 編輯器主題配置
