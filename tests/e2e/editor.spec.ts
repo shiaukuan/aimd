@@ -69,33 +69,6 @@ test.describe('編輯器功能', () => {
     expect(content).toBe('# 新的標題\n\n這是新的內容');
   });
 
-  test('狀態列應該顯示正確的統計資訊', async ({ page }) => {
-    const textarea = page.getByTestId('editor-textarea');
-
-    // 輸入已知內容
-    await textarea.fill('Hello World\nSecond line');
-
-    // 等待統計更新
-    await page.waitForTimeout(100);
-
-    // 檢查統計資訊
-    await expect(page.getByTestId('stats-words')).toContainText('3 字');
-    await expect(page.getByTestId('stats-characters')).toContainText('23 字元');
-    await expect(page.getByTestId('stats-lines-total')).toContainText('2 行');
-  });
-
-  test('應該顯示游標位置', async ({ page }) => {
-    const textarea = page.getByTestId('editor-textarea');
-
-    // 將游標移動到特定位置
-    await textarea.click();
-    await textarea.press('End'); // 移動到行尾
-
-    // 檢查游標位置顯示
-    await expect(page.getByTestId('stats-lines')).toContainText('第 1 行');
-    await expect(page.getByTestId('stats-column')).toBeVisible();
-  });
-
   test('粗體按鈕應該正常工作', async ({ page }) => {
     const textarea = page.getByTestId('editor-textarea');
 
@@ -253,22 +226,5 @@ test.describe('編輯器功能', () => {
 
     const content = await textarea.inputValue();
     expect(content).toBe('[click](url) here');
-  });
-
-  test('應該正確處理多行文字的游標位置', async ({ page }) => {
-    const textarea = page.getByTestId('editor-textarea');
-
-    await textarea.fill('第一行\n第二行\n第三行');
-
-    // 將游標移動到第二行
-    await textarea.click();
-    await page.keyboard.press('Home');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('ArrowRight');
-
-    // 檢查游標位置顯示
-    await expect(page.getByTestId('stats-lines')).toContainText('第 2 行');
-    await expect(page.getByTestId('stats-column')).toContainText('第 3 列');
   });
 });

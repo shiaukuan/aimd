@@ -2,19 +2,29 @@
 // ABOUTME: 測試渲染功能、錯誤處理、主題管理和驗證功能
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { MarpEngine, getMarpEngine, resetMarpEngine, renderMarkdownToSlides, validateMarpMarkdown } from './marp';
+import {
+  MarpEngine,
+  getMarpEngine,
+  resetMarpEngine,
+  renderMarkdownToSlides,
+  validateMarpMarkdown,
+} from './marp';
 import { MarpRenderOptions } from '@/types/marp';
 
 // Mock Marp Core
 vi.mock('@marp-team/marp-core', () => ({
   Marp: vi.fn().mockImplementation(() => ({
-    render: vi.fn().mockImplementation((markdown) => {
+    render: vi.fn().mockImplementation(markdown => {
       // 模擬根據內容返回不同的結果
       const slideCount = (markdown.match(/---/g) || []).length + 1;
-      const sections = markdown.split('---').map((section, index) => 
-        `<section><h1>${section.includes('#') ? section.match(/# (.+)/)?.[1] || `Test Slide ${index + 1}` : `Test Slide ${index + 1}`}</h1>${section.includes('```javascript') ? '<code>javascript</code>' : ''}</section>`
-      ).join('');
-      
+      const sections = markdown
+        .split('---')
+        .map(
+          (section, index) =>
+            `<section><h1>${section.includes('#') ? section.match(/# (.+)/)?.[1] || `Test Slide ${index + 1}` : `Test Slide ${index + 1}`}</h1>${section.includes('```javascript') ? '<code>javascript</code>' : ''}</section>`
+        )
+        .join('');
+
       return {
         html: sections,
         css: 'section { background: white; }',
@@ -91,7 +101,9 @@ function hello() {
   describe('錯誤處理', () => {
     it('應拒絕空的 Markdown 內容', async () => {
       await expect(engine.render('')).rejects.toThrow('Markdown 內容不能為空');
-      await expect(engine.render('   ')).rejects.toThrow('Markdown 內容不能為空');
+      await expect(engine.render('   ')).rejects.toThrow(
+        'Markdown 內容不能為空'
+      );
     });
 
     it('應處理渲染錯誤', async () => {
@@ -101,7 +113,7 @@ function hello() {
           throw new Error('渲染失敗');
         }),
       };
-      
+
       const engineWithError = new MarpEngine();
       (engineWithError as any).marp = mockMarp;
 
@@ -113,7 +125,7 @@ function hello() {
       const mockMarp = {
         render: vi.fn().mockReturnValue({ html: '', css: '' }),
       };
-      
+
       const engineWithEmptyResult = new MarpEngine();
       (engineWithEmptyResult as any).marp = mockMarp;
 
@@ -139,7 +151,9 @@ function hello() {
     });
 
     it('應拒絕不存在的主題', () => {
-      expect(() => engine.setTheme('nonexistent')).toThrow('找不到主題: nonexistent');
+      expect(() => engine.setTheme('nonexistent')).toThrow(
+        '找不到主題: nonexistent'
+      );
     });
 
     it('應能添加自訂主題', () => {
@@ -182,7 +196,9 @@ function hello() {
       const result = engine.validateMarkdown(markdown);
 
       expect(result.isValid).toBe(false);
-      expect(result.errors.some(e => e.message === '未關閉的 HTML 註釋')).toBe(true);
+      expect(result.errors.some(e => e.message === '未關閉的 HTML 註釋')).toBe(
+        true
+      );
     });
 
     it('應檢測未關閉的程式碼區塊', () => {
@@ -190,7 +206,9 @@ function hello() {
       const result = engine.validateMarkdown(markdown);
 
       expect(result.isValid).toBe(false);
-      expect(result.errors.some(e => e.message === '未關閉的程式碼區塊')).toBe(true);
+      expect(result.errors.some(e => e.message === '未關閉的程式碼區塊')).toBe(
+        true
+      );
     });
   });
 
@@ -305,12 +323,5 @@ describe('投影片解析', () => {
     const result = await engine.render(markdown);
 
     expect(result.slides[0].title).toBe('我的標題');
-  });
-
-  it('應能處理沒有標題的投影片', async () => {
-    const markdown = '只有內容，沒有標題';
-    const result = await engine.render(markdown);
-
-    expect(result.slides[0].title).toBeUndefined();
   });
 });

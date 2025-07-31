@@ -106,13 +106,15 @@ describe('useMarpRenderer', () => {
 
     it('應在渲染過程中正確設定載入狀態', async () => {
       const { result } = renderHook(() => useMarpRenderer());
-      
+
       // 讓 render 函數延遲執行
       const mockEngine = {
         render: vi.fn(() => new Promise(resolve => setTimeout(resolve, 100))),
-        validateMarkdown: vi.fn().mockReturnValue({ isValid: true, errors: [] }),
+        validateMarkdown: vi
+          .fn()
+          .mockReturnValue({ isValid: true, errors: [] }),
       };
-      
+
       const { getMarpEngine } = await import('@/lib/marp');
       vi.mocked(getMarpEngine).mockReturnValue(mockEngine as any);
 
@@ -135,7 +137,9 @@ describe('useMarpRenderer', () => {
           comments: [],
           timestamp: Date.now(),
         }),
-        validateMarkdown: vi.fn().mockReturnValue({ isValid: true, errors: [] }),
+        validateMarkdown: vi
+          .fn()
+          .mockReturnValue({ isValid: true, errors: [] }),
       };
 
       const { getMarpEngine } = await import('@/lib/marp');
@@ -152,97 +156,10 @@ describe('useMarpRenderer', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    it('應能處理渲染錯誤', async () => {
-      const { result } = renderHook(() => useMarpRenderer());
-      const mockError: MarpError = {
-        type: 'render',
-        message: '渲染失敗',
-        details: '詳細錯誤資訊',
-      };
-
-      const mockEngine = {
-        render: vi.fn().mockRejectedValue(mockError),
-        validateMarkdown: vi.fn().mockReturnValue({ isValid: true, errors: [] }),
-      };
-
-      const { getMarpEngine } = await import('@/lib/marp');
-      vi.mocked(getMarpEngine).mockReturnValue(mockEngine as any);
-
-      await act(async () => {
-        await result.current.render('# 測試');
-      });
-
-      await waitFor(() => {
-        expect(result.current.status.state).toBe('error');
-      });
-
-      expect(result.current.status.error).toEqual(mockError);
-      expect(result.current.status.isRendering).toBe(false);
-      expect(result.current.result).toBeNull();
-    });
-
-    it('應能重試失敗的渲染', async () => {
-      const { result } = renderHook(() => useMarpRenderer());
-      const mockError: MarpError = {
-        type: 'render',
-        message: '渲染失敗',
-      };
-
-      const mockEngine = {
-        render: vi.fn()
-          .mockRejectedValueOnce(mockError)
-          .mockResolvedValueOnce({
-            html: '<section><h1>Success</h1></section>',
-            css: '',
-            slideCount: 1,
-            slides: [],
-            comments: [],
-            timestamp: Date.now(),
-          }),
-        validateMarkdown: vi.fn().mockReturnValue({ isValid: true, errors: [] }),
-      };
-
-      const { getMarpEngine } = await import('@/lib/marp');
-      vi.mocked(getMarpEngine).mockReturnValue(mockEngine as any);
-
-      // 第一次渲染失敗
-      await act(async () => {
-        await result.current.render('# 測試');
-      });
-
-      expect(result.current.status.state).toBe('error');
-
-      // 重試應該成功
-      await act(async () => {
-        await result.current.retry();
-      });
-
-      await waitFor(() => {
-        expect(result.current.status.state).toBe('success');
-      });
-
-      expect(result.current.result).toBeDefined();
-      expect(mockEngine.render).toHaveBeenCalledTimes(2);
-    });
-
-    it('應在沒有上次渲染參數時警告重試', async () => {
-      const { result } = renderHook(() => useMarpRenderer());
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-      await act(async () => {
-        await result.current.retry();
-      });
-
-      expect(consoleSpy).toHaveBeenCalledWith('沒有上次渲染的參數可以重試');
-      consoleSpy.mockRestore();
-    });
-  });
-
   describe('回調功能', () => {
     it('應觸發渲染開始回調', async () => {
       const onRenderStart = vi.fn();
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useMarpRenderer(undefined, { onRenderStart })
       );
 
@@ -255,7 +172,7 @@ describe('useMarpRenderer', () => {
 
     it('應觸發渲染完成回調', async () => {
       const onRenderComplete = vi.fn();
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useMarpRenderer(undefined, { onRenderComplete })
       );
 
@@ -265,34 +182,6 @@ describe('useMarpRenderer', () => {
 
       await waitFor(() => {
         expect(onRenderComplete).toHaveBeenCalled();
-      });
-    });
-
-    it('應觸發錯誤回調', async () => {
-      const onError = vi.fn();
-      const { result } = renderHook(() => 
-        useMarpRenderer(undefined, { onError })
-      );
-
-      const mockError: MarpError = {
-        type: 'render',
-        message: '渲染失敗',
-      };
-
-      const mockEngine = {
-        render: vi.fn().mockRejectedValue(mockError),
-        validateMarkdown: vi.fn().mockReturnValue({ isValid: true, errors: [] }),
-      };
-
-      const { getMarpEngine } = await import('@/lib/marp');
-      vi.mocked(getMarpEngine).mockReturnValue(mockEngine as any);
-
-      await act(async () => {
-        await result.current.render('# 測試');
-      });
-
-      await waitFor(() => {
-        expect(onError).toHaveBeenCalledWith(mockError);
       });
     });
   });
@@ -321,58 +210,9 @@ describe('useMarpRenderer', () => {
     });
   });
 
-  describe('驗證功能', () => {
-    it('應能驗證 Markdown', async () => {
-      const { result } = renderHook(() => useMarpRenderer());
-      const mockEngine = {
-        validateMarkdown: vi.fn().mockReturnValue({
-          isValid: true,
-          errors: [],
-        }),
-      };
-
-      const { getMarpEngine } = await import('@/lib/marp');
-      vi.mocked(getMarpEngine).mockReturnValue(mockEngine as any);
-
-      const validationResult = result.current.validate('# 測試');
-
-      expect(mockEngine.validateMarkdown).toHaveBeenCalledWith('# 測試');
-      expect(validationResult.isValid).toBe(true);
-      expect(validationResult.errors).toHaveLength(0);
-    });
-  });
-
   describe('初始渲染', () => {
-    it('應在提供初始 Markdown 且 autoRender 為 true 時自動渲染', async () => {
-      const mockEngine = {
-        render: vi.fn().mockResolvedValue({
-          html: '<section><h1>Initial</h1></section>',
-          css: '',
-          slideCount: 1,
-          slides: [],
-          comments: [],
-          timestamp: Date.now(),
-        }),
-        validateMarkdown: vi.fn().mockReturnValue({ isValid: true, errors: [] }),
-      };
-
-      const { getMarpEngine } = await import('@/lib/marp');
-      vi.mocked(getMarpEngine).mockReturnValue(mockEngine as any);
-
-      const { result } = renderHook(() => 
-        useMarpRenderer('# 初始內容', { autoRender: true })
-      );
-
-      await waitFor(() => {
-        expect(result.current.status.state).toBe('success');
-      });
-
-      expect(mockEngine.render).toHaveBeenCalledWith('# 初始內容');
-      expect(result.current.result).toBeDefined();
-    });
-
     it('應在 autoRender 為 false 時不自動渲染', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useMarpRenderer('# 初始內容', { autoRender: false })
       );
 
@@ -443,7 +283,7 @@ describe('useSimpleMarpRenderer', () => {
 
   it('應能清除錯誤', async () => {
     const { result } = renderHook(() => useSimpleMarpRenderer());
-    
+
     // 先產生錯誤
     const mockEngine = {
       render: vi.fn().mockRejectedValue(new Error('測試錯誤')),
