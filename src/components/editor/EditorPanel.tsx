@@ -375,25 +375,22 @@ export function EditorPanel({
   useEffect(() => {
     if (isInitialized) return;
 
+    // 優先順序：1. savedContent 2. propContent 3. storeContent
+    const { content: savedContent, hasData } = autoSave.loadSavedContent();
     let contentToUse = '';
     
-    // 優先順序：1. propContent 2. savedContent 3. storeContent
-    if (propContent) {
+    if (hasData && savedContent.trim()) {
+      contentToUse = savedContent;
+      console.log('載入已儲存內容:', savedContent.slice(0, 50) + '...');
+    } else if (propContent) {
       contentToUse = propContent;
-    } else {
-      const { content: savedContent, hasData } = autoSave.loadSavedContent();
-      if (hasData && savedContent) {
-        contentToUse = savedContent;
-      } else if (storeContent) {
-        contentToUse = storeContent;
-      }
+    } else if (storeContent) {
+      contentToUse = storeContent;
     }
 
-    if (contentToUse && contentToUse !== localContent) {
+    if (contentToUse !== localContent) {
       setLocalContent(contentToUse);
-      if (contentToUse !== storeContent) {
-        setStoreContent(contentToUse);
-      }
+      setStoreContent(contentToUse);
     }
 
     setIsInitialized(true);
