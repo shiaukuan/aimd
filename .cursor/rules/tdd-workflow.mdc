@@ -1,6 +1,5 @@
 ---
-alwaysApply: true
-description: Test-Driven Development (TDD) 工作流程
+description: TDD 工作流程和實踐指南
 ---
 
 # TDD 實踐指南

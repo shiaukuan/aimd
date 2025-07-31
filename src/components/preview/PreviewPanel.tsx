@@ -161,6 +161,7 @@ export default function PreviewPanel({
             renderResult={renderResult}
             enableKeyboardShortcuts={true}
             showThumbnails={true}
+            initialZoom={0.5}
             onSlideChange={(index) => {
               // 可以在這裡處理投影片變更的額外邏輯
               console.log('投影片變更到:', index);

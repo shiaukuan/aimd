@@ -15,86 +15,123 @@ export function SlideViewer({
   centered = true,
   className,
 }: SlideViewerProps) {
-  // 生成內聯樣式
-  const inlineStyles = useMemo(() => {
+  // 生成 Marp 樣式
+  const marpStyles = useMemo(() => {
     return `
       <style>
-        ${slideCss}
+        ${slideCss || ''}
         
+        /* 確保 Marp 投影片正確顯示 */
         .slide-viewer-content {
           width: ${slideSize.width}px;
           height: ${slideSize.height}px;
           transform: scale(${zoomLevel});
           transform-origin: center center;
-          background: white;
+          background-color: white;
           border-radius: 8px;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
           overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          padding: 2rem;
-          box-sizing: border-box;
+          position: relative;
         }
         
+        /* Marp 投影片樣式 */
         .slide-viewer-content section {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
+          width: 100% !important;
+          height: 100% !important;
+          padding: 60px !important;
+          margin: 0 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+          align-items: center !important;
+          box-sizing: border-box !important;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+          font-size: 28px !important;
+          line-height: 1.4 !important;
+          color: #333 !important;
+          background: white !important;
         }
         
-        .slide-viewer-content h1,
-        .slide-viewer-content h2,
-        .slide-viewer-content h3,
-        .slide-viewer-content h4,
-        .slide-viewer-content h5,
-        .slide-viewer-content h6 {
-          margin: 0 0 1rem 0;
-          text-align: center;
+        .slide-viewer-content h1 {
+          font-size: 2.5em !important;
+          font-weight: 700 !important;
+          margin: 0 0 0.5em 0 !important;
+          text-align: center !important;
+          color: #1a1a1a !important;
+        }
+        
+        .slide-viewer-content h2 {
+          font-size: 1.8em !important;
+          font-weight: 600 !important;
+          margin: 1em 0 0.5em 0 !important;
+          text-align: center !important;
+          color: #2d2d2d !important;
+        }
+        
+        .slide-viewer-content h3 {
+          font-size: 1.4em !important;
+          font-weight: 600 !important;
+          margin: 1em 0 0.5em 0 !important;
+          color: #404040 !important;
         }
         
         .slide-viewer-content p {
-          margin: 0 0 1rem 0;
-          text-align: center;
+          margin: 0.5em 0 !important;
+          text-align: center !important;
+          font-size: 1em !important;
+          line-height: 1.6 !important;
         }
         
-        .slide-viewer-content ul,
-        .slide-viewer-content ol {
-          margin: 0 0 1rem 0;
-          text-align: left;
-          display: inline-block;
+        .slide-viewer-content ul {
+          margin: 1em 0 !important;
+          text-align: left !important;
+          display: inline-block !important;
+          font-size: 1em !important;
         }
         
-        .slide-viewer-content img {
-          max-width: 100%;
-          height: auto;
-          margin: 1rem 0;
+        .slide-viewer-content li {
+          margin: 0.5em 0 !important;
+          line-height: 1.6 !important;
+        }
+        
+        .slide-viewer-content strong {
+          font-weight: 700 !important;
+          color: #1a1a1a !important;
+        }
+        
+        .slide-viewer-content em {
+          font-style: italic !important;
         }
         
         .slide-viewer-content code {
-          background: rgba(0, 0, 0, 0.1);
-          padding: 0.2em 0.4em;
-          border-radius: 3px;
-          font-family: 'Courier New', monospace;
+          background: rgba(0, 0, 0, 0.1) !important;
+          padding: 0.2em 0.4em !important;
+          border-radius: 3px !important;
+          font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace !important;
+          font-size: 0.85em !important;
         }
         
         .slide-viewer-content pre {
-          background: rgba(0, 0, 0, 0.05);
-          padding: 1rem;
-          border-radius: 6px;
-          overflow-x: auto;
-          margin: 1rem 0;
+          background: rgba(0, 0, 0, 0.05) !important;
+          padding: 1rem !important;
+          border-radius: 6px !important;
+          overflow-x: auto !important;
+          margin: 1rem 0 !important;
+          font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace !important;
+        }
+        
+        .slide-viewer-content img {
+          max-width: 100% !important;
+          height: auto !important;
+          margin: 1rem 0 !important;
         }
         
         .slide-viewer-content blockquote {
-          border-left: 4px solid #ddd;
-          margin: 1rem 0;
-          padding-left: 1rem;
-          color: #666;
+          border-left: 4px solid #ddd !important;
+          margin: 1rem 0 !important;
+          padding-left: 1rem !important;
+          color: #666 !important;
+          font-style: italic !important;
         }
       </style>
     `;
@@ -131,7 +168,7 @@ export function SlideViewer({
         <div
           className="slide-viewer-content"
           dangerouslySetInnerHTML={{
-            __html: inlineStyles + `<section>${slideHtml}</section>`,
+            __html: marpStyles + `<section>${slideHtml}</section>`,
           }}
         />
       </div>

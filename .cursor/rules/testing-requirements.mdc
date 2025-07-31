@@ -1,6 +1,5 @@
 ---
-alwaysApply: true
-description: 測試要求和執行流程
+description: 測試要求和品質標準
 ---
 
 # 測試規範

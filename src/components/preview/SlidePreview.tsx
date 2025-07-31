@@ -16,7 +16,7 @@ export default function SlidePreview({
   renderResult,
   className,
   initialSlide = 0,
-  initialZoom = 1,
+  initialZoom = 0.5,
   showThumbnails = true,
   thumbnailPanelWidth = 200,
   onSlideChange,

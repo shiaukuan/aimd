@@ -48,7 +48,7 @@ export function useSlideControls(
   const {
     totalSlides,
     initialSlide = 0,
-    initialZoom = 1,
+    initialZoom = 0.5,
     enableKeyboardShortcuts = true,
     onSlideChange,
     onZoomChange,
