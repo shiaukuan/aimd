@@ -3,14 +3,14 @@
 
 'use client';
 
-import React, { Component, ReactNode, ErrorInfo } from 'react';
+import React, { Component, ReactNode, ErrorInfo as ReactErrorInfo } from 'react';
 import { AlertCircle, RefreshCw, Home, Bug } from 'lucide-react';
 import { Button } from './button';
 
 export interface ErrorInfo {
   componentStack: string;
-  errorBoundary?: string;
-  errorBoundaryStack?: string;
+  errorBoundary?: string | undefined;
+  errorBoundaryStack?: string | undefined;
 }
 
 interface ErrorBoundaryState {
@@ -69,18 +69,27 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ReactErrorInfo) {
     const { onError } = this.props;
     const { errorId } = this.state;
     
     // 更新錯誤資訊
     this.setState({
-      errorInfo,
+      errorInfo: {
+        componentStack: errorInfo.componentStack || '',
+        errorBoundary: errorInfo.digest || undefined,
+        errorBoundaryStack: errorInfo.componentStack || '',
+      },
     });
 
     // 呼叫錯誤報告回調
     if (onError) {
-      onError(error, errorInfo, errorId);
+      const customErrorInfo: ErrorInfo = {
+        componentStack: errorInfo.componentStack || '',
+        errorBoundary: errorInfo.digest || undefined,
+        errorBoundaryStack: errorInfo.componentStack || '',
+      };
+      onError(error, customErrorInfo, errorId);
     }
 
     // 記錄錯誤到控制台
@@ -310,7 +319,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
 // 函數式組件包裝器，提供 hook 式 API
 interface ErrorBoundaryWrapperProps extends Omit<ErrorBoundaryProps, 'onError'> {
-  onError?: (error: Error, errorInfo: ErrorInfo, errorId: string) => void;
+  onError?: (error: Error, errorInfo: ErrorInfo, errorId: string) => void | undefined;
 }
 
 export function ErrorBoundaryWrapper({ 
@@ -320,7 +329,7 @@ export function ErrorBoundaryWrapper({
 }: ErrorBoundaryWrapperProps) {
   return (
     <ErrorBoundary
-      onError={onError}
+      onError={onError || undefined}
       {...props}
     >
       {children}

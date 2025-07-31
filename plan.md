@@ -105,11 +105,12 @@
    - `src/types/` - TypeScript 型別定義
    - `src/components/ui/` - shadcn/ui 組件 (自動建立)
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/lib/utils.ts` - 工具函數
-- `src/types/index.ts` - 專案型別定義
-- `src/lib/validations.ts` - Zod schemas
+- 請先閱讀 `docs/README.md` 了解專案架構和實作指引
+- 參考文件中的程式碼範例和最佳實踐
+- 更新 `docs/component-api-reference.md` 記錄新增的組件 API
+- 在 `docs/types-reference.md` 中記錄新增的型別定義
 
 **測試標準**:
 
@@ -153,13 +154,12 @@
 - 命名規則：`檔名.test.ts` 或 `檔名.spec.ts`
 - 優點：便於維護、易於發現相關測試、減少檔案路徑複雜度
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `vitest.config.ts` - Vitest 配置
-- `playwright.config.ts` - Playwright 配置
-- `src/lib/utils.test.ts` - 範例單元測試 (colocation)
-- `src/components/Button.test.tsx` - 範例組件測試 (colocation)
-- `tests/e2e/basic.spec.ts` - 範例 E2E 測試
+- 請先閱讀 `docs/README.md` 了解專案測試策略和設定方式
+- 參考 `docs/testing-setup-tutorial.md` 中的測試環境配置指引
+- 更新 `docs/component-api-reference.md` 記錄測試相關的組件和 hooks
+- 在專案根目錄的 `README.md` 中更新測試指令說明
 
 **測試標準**:
 
@@ -196,12 +196,12 @@
 4. 更新 `src/app/globals.css` 加入自訂樣式
 5. 實作響應式網格佈局
 
-**需要建立/修改的檔案**:
+**實作參考**:
 
-- `src/app/page.tsx` - 主頁面組件
-- `src/components/layout/Header.tsx` - 頁面標題列
-- `src/components/layout/MainLayout.tsx` - 主要佈局容器
-- `src/app/globals.css` - 全域樣式
+- 請先閱讀 `docs/README.md` 了解專案的佈局設計原則
+- 參考 `docs/component-api-reference.md` 中的佈局組件使用方式
+- 更新 `docs/project-architecture-for-ai.md` 記錄佈局組件的設計決策
+- 在 `docs/README.md` 中更新 UI 組件的使用說明
 
 **設計要求**:
 
@@ -242,11 +242,12 @@
 4. 實作 localStorage 持久化
 5. 整合到主頁面
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/components/ui/SplitPanel.tsx` - 分割面板組件
-- `src/hooks/useSplitPanel.ts` - 面板邏輯 hook
-- `src/lib/storage.ts` - localStorage 工具函數
+- 請先閱讀 `docs/README.md` 了解分割面板的設計規範和互動邏輯
+- 參考 `docs/component-api-reference.md` 中關於面板組件的 API 設計
+- 更新 `docs/hooks-reference.md` 記錄 `useSplitPanel` hook 的使用方式
+- 在 `docs/state-management-guide.md` 中記錄面板狀態的管理方式
 
 **功能要求**:
 
@@ -287,11 +288,12 @@
 4. 加入預留的文字輸入區域
 5. 整合到分割面板左側
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/components/editor/EditorPanel.tsx` - 編輯器面板
-- `src/components/editor/EditorToolbar.tsx` - 編輯器工具列
-- `src/types/editor.ts` - 編輯器相關型別
+- 請先閱讀 `docs/README.md` 了解編輯器組件的設計架構
+- 參考 `docs/component-api-reference.md` 中編輯器相關組件的 API 規範
+- 更新 `docs/types-reference.md` 記錄編輯器相關的型別定義
+- 在 `docs/state-management-guide.md` 中記錄編輯器狀態管理方式
 
 **設計要求**:
 
@@ -332,12 +334,12 @@
 4. 加入預覽區域佔位符
 5. 整合到分割面板右側
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/components/preview/PreviewPanel.tsx` - 預覽面板
-- `src/components/preview/PreviewToolbar.tsx` - 預覽工具列
-- `src/components/ui/LoadingSpinner.tsx` - 載入動畫
-- `src/types/preview.ts` - 預覽相關型別
+- 請先閱讀 `docs/README.md` 了解預覽組件的設計架構和渲染流程
+- 參考 `docs/component-api-reference.md` 中預覽相關組件的 API 設計
+- 更新 `docs/types-reference.md` 記錄預覽組件的型別定義
+- 在 `docs/state-management-guide.md` 中記錄預覽狀態的管理策略
 
 **設計要求**:
 
@@ -385,11 +387,12 @@
 4. 加入行號顯示功能
 5. 整合到 `EditorPanel`
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/components/editor/MarkdownEditor.tsx` - Markdown 編輯器
-- `src/hooks/useMarkdownHighlight.ts` - 語法高亮 hook
-- `src/lib/highlight.ts` - highlight.js 配置
+- 請先閱讀 `docs/README.md` 了解 Markdown 編輯器的實作架構和語法高亮機制
+- 參考 `docs/component-api-reference.md` 中編輯器組件的 API 設計
+- 更新 `docs/hooks-reference.md` 記錄語法高亮相關的 hooks
+- 在 `docs/codebase-architecture.md` 中記錄 highlight.js 的整合方式
 
 **功能要求**:
 
@@ -434,13 +437,12 @@
 6. 加入錯誤邊界組件
 7. 整合到編輯器和預覽組件
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/hooks/useAutoSave.ts` - 自動儲存
-- `src/lib/editor-settings.ts` - 編輯器設定
-- `src/hooks/useDebounce.ts` - debounce hook
-- `src/store/editorStore.ts` - Zustand store
-- `src/components/ui/ErrorBoundary.tsx` - 錯誤邊界
+- 請先閱讀 `docs/README.md` 了解編輯器增強功能和同步機制的設計原理
+- 參考 `docs/hooks-reference.md` 中關於自動儲存、debounce 等 hooks 的使用方式
+- 更新 `docs/state-management-guide.md` 記錄全域狀態管理的實作細節
+- 在 `docs/component-api-reference.md` 中記錄錯誤邊界組件的 API
 
 **功能要求**:
 
@@ -489,11 +491,12 @@
 4. 加入錯誤處理
 5. 整合到預覽組件
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/lib/marp.ts` - Marp 引擎封裝
-- `src/hooks/useMarpRenderer.ts` - 渲染 hook
-- `src/types/marp.ts` - Marp 相關型別
+- 請先閱讀 `docs/README.md` 了解 Marp 引擎的整合方式和渲染流程
+- 參考 `docs/component-api-reference.md` 中關於 Marp 相關組件的 API 設計
+- 更新 `docs/types-reference.md` 記錄 Marp 相關的型別定義
+- 在 `docs/codebase-architecture.md` 中記錄 Marp Core 的整合架構
 
 **功能要求**:
 
@@ -534,11 +537,12 @@
 4. 加入縮放功能
 5. 整合到 `PreviewPanel`
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/components/preview/SlidePreview.tsx` - 投影片預覽
-- `src/components/preview/SlideNavigation.tsx` - 導航控制
-- `src/hooks/useSlideNavigation.ts` - 導航邏輯
+- 請先閱讀 `docs/README.md` 了解投影片預覽組件的設計架構
+- 參考 `docs/component-api-reference.md` 中預覽和導航組件的 API 規範
+- 更新 `docs/hooks-reference.md` 記錄投影片導航相關的 hooks
+- 在 `docs/state-management-guide.md` 中記錄投影片狀態管理方式
 
 **功能要求**:
 
@@ -579,11 +583,12 @@
 4. 建立演示模式
 5. 更新預覽工具列
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/components/preview/FullscreenPreview.tsx` - 全螢幕預覽
-- `src/hooks/useKeyboardNavigation.ts` - 鍵盤導航
-- `src/components/preview/SlideInfo.tsx` - 投影片資訊
+- 請先閱讀 `docs/README.md` 了解全螢幕預覽和鍵盤導航的實作方式
+- 參考 `docs/hooks-reference.md` 中關於鍵盤事件處理的 hooks 使用方式
+- 更新 `docs/component-api-reference.md` 記錄全螢幕和導航組件的 API
+- 在 `docs/project-architecture-for-ai.md` 中記錄演示模式的設計決策
 
 **功能要求**:
 
@@ -628,13 +633,12 @@
 4. 加入 CORS 和 Rate Limiting
 5. 建立 API 測試
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/app/api/v1/slides/route.ts` - 投影片生成 API
-- `src/app/api/v1/export/route.ts` - 匯出 API
-- `src/lib/api/middleware.ts` - API 中間件
-- `src/lib/api/errors.ts` - 錯誤處理
-- `src/lib/validations/api.ts` - API 驗證 schemas
+- 請先閱讀 `docs/README.md` 了解 API 架構和 Next.js Route Handlers 的使用方式
+- 參考 `docs/project-architecture-for-ai.md` 中關於 API 設計的指導原則
+- 更新 `docs/types-reference.md` 記錄 API 相關的型別定義
+- 在 `docs/codebase-architecture.md` 中記錄 API 路由的整體架構
 
 **功能要求**:
 
@@ -678,12 +682,12 @@
 4. 加入錯誤處理和重試
 5. 建立測試用的 mock
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/lib/openai.ts` - OpenAI 客戶端
-- `src/lib/api/auth.ts` - API 金鑰驗證
-- `src/lib/api/rate-limit.ts` - Rate limiting
-- `src/lib/__tests__/openai.test.ts` - OpenAI 測試
+- 請先閱讀 `docs/README.md` 了解 OpenAI API 整合的安全考量和實作方式
+- 參考 `docs/project-architecture-for-ai.md` 中關於 API 安全和錯誤處理的指導原則
+- 更新 `docs/codebase-architecture.md` 記錄 OpenAI 客戶端的架構設計
+- 在 `docs/testing-setup-tutorial.md` 中記錄 API 測試和 mock 的設定方式
 
 **功能要求**:
 
@@ -724,12 +728,12 @@
 4. 加入範本驗證
 5. 建立範本測試
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/lib/prompt-templates.ts` - 範本引擎
-- `src/templates/` - 範本檔案目錄
-- `src/templates/default.md` - 預設範本
-- `src/lib/__tests__/prompt-templates.test.ts` - 範本測試
+- 請先閱讀 `docs/README.md` 了解 Prompt 範本系統的設計原理和使用方式
+- 參考 `docs/project-architecture-for-ai.md` 中關於 prompt 工程的最佳實踐
+- 更新 `docs/types-reference.md` 記錄範本相關的型別定義
+- 在 `docs/codebase-architecture.md` 中記錄範本引擎的實作架構
 
 **範本變數**:
 
@@ -771,12 +775,12 @@
 4. 加入詳細日誌記錄
 5. 建立 API 整合測試
 
-**需要建立的檔案**:
+**實作參考**:
 
-- 更新 `src/app/api/v1/slides/route.ts`
-- `src/lib/cache.ts` - 快取系統
-- `src/lib/logger.ts` - 日誌系統
-- `src/lib/__tests__/api.test.ts` - API 整合測試
+- 請先閱讀 `docs/README.md` 了解完整的投影片生成流程和系統整合方式
+- 參考 `docs/project-architecture-for-ai.md` 中關於快取策略和效能優化的指導
+- 更新 `docs/codebase-architecture.md` 記錄 API 整合的完整架構
+- 在 `docs/testing-setup-tutorial.md` 中記錄 API 整合測試的設定方式
 
 **API 功能**:
 
@@ -822,12 +826,12 @@
 4. 建立錯誤顯示和成功回饋
 5. 整合到主頁面
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/components/forms/GenerateForm.tsx` - 生成表單
-- `src/hooks/useGenerateForm.ts` - 表單邏輯
-- `src/lib/validations/form.ts` - 表單驗證
-- `src/components/ui/FormField.tsx` - 自訂表單欄位
+- 請先閱讀 `docs/README.md` 了解表單設計和使用者輸入驗證的最佳實踐
+- 參考 `docs/component-api-reference.md` 中關於表單組件的 API 設計
+- 更新 `docs/types-reference.md` 記錄表單相關的型別定義
+- 在 `docs/state-management-guide.md` 中記錄表單狀態管理的實作方式
 
 **表單欄位**:
 
@@ -869,12 +873,12 @@
 4. 建立重試機制
 5. 整合 Toast 通知
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/lib/api/client.ts` - API 客戶端
-- `src/hooks/useGenerateSlides.ts` - 生成邏輯
-- `src/components/ui/Toast.tsx` - Toast 通知
-- `src/store/generationStore.ts` - 生成狀態 store
+- 請先閱讀 `docs/README.md` 了解 API 呼叫和錯誤處理的設計模式
+- 參考 `docs/hooks-reference.md` 中關於內容生成相關 hooks 的使用方式
+- 更新 `docs/state-management-guide.md` 記錄生成狀態管理的實作細節
+- 在 `docs/component-api-reference.md` 中記錄 Toast 和狀態指示組件的 API
 
 **功能要求**:
 
@@ -918,12 +922,12 @@
 4. 加入狀態同步邏輯
 5. 重構現有組件使用 store
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/store/index.ts` - Store 統一匯出
-- `src/store/editorStore.ts` - 編輯器狀態
-- `src/store/previewStore.ts` - 預覽狀態
-- `src/store/settingsStore.ts` - 設定狀態
+- 請先閱讀 `docs/README.md` 了解全域狀態管理的架構設計
+- 參考 `docs/state-management-guide.md` 中關於 Zustand 的使用指南和最佳實踐
+- 更新 `docs/hooks-reference.md` 記錄狀態相關 hooks 的使用方式
+- 在 `docs/codebase-architecture.md` 中記錄狀態管理的整體架構
 
 **狀態內容**:
 
@@ -964,12 +968,12 @@
 4. 建立幫助和提示系統
 5. 整合到相關 UI 組件
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/components/ui/TokenUsage.tsx` - Token 使用顯示
-- `src/lib/cost-calculator.ts` - 成本計算
-- `src/components/ui/HelpTooltip.tsx` - 幫助提示
-- `src/components/ui/RetryButton.tsx` - 重試按鈕
+- 請先閱讀 `docs/README.md` 了解用戶體驗設計的指導原則
+- 參考 `docs/component-api-reference.md` 中關於 UX 增強組件的 API 設計
+- 更新 `docs/project-architecture-for-ai.md` 記錄成本計算和 token 統計的實作方式
+- 在 `docs/hooks-reference.md` 中記錄 UX 相關 hooks 的使用方式
 
 **功能要求**:
 
@@ -1014,12 +1018,12 @@
 4. 處理特殊內容類型
 5. 實作檔案下載回應
 
-**需要建立的檔案**:
+**實作參考**:
 
-- 更新 `src/app/api/v1/export/route.ts`
-- `src/lib/pptx-generator.ts` - PPTX 生成器
-- `src/lib/markdown-parser.ts` - Markdown 解析
-- `src/templates/slide-layouts.ts` - 投影片佈局
+- 請先閱讀 `docs/README.md` 了解 PPTX 匯出功能的設計原理和實作方式
+- 參考 `docs/project-architecture-for-ai.md` 中關於檔案生成和下載的指導原則
+- 更新 `docs/codebase-architecture.md` 記錄 pptxgenjs 整合的架構設計
+- 在 `docs/types-reference.md` 中記錄 PPTX 相關的型別定義
 
 **功能要求**:
 
@@ -1060,12 +1064,12 @@
 4. 建立錯誤處理
 5. 整合到預覽面板
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/components/export/ExportButton.tsx` - 匯出按鈕
-- `src/components/export/ExportDialog.tsx` - 匯出選項對話框
-- `src/hooks/useExport.ts` - 匯出邏輯
-- `src/lib/file-download.ts` - 檔案下載工具
+- 請先閱讀 `docs/README.md` 了解匯出 UI 的設計規範和使用者流程
+- 參考 `docs/component-api-reference.md` 中關於匯出相關組件的 API 設計
+- 更新 `docs/hooks-reference.md` 記錄匯出功能相關 hooks 的使用方式
+- 在 `docs/state-management-guide.md` 中記錄匯出狀態管理的實作方式
 
 **功能要求**:
 
@@ -1106,12 +1110,12 @@
 4. 加入即時預覽更新
 5. 整合到匯出功能
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/lib/themes.ts` - 主題系統
-- `src/components/themes/ThemeSelector.tsx` - 主題選擇器
-- `src/themes/` - 主題檔案目錄
-- `src/themes/default.css` - 預設主題
+- 請先閱讀 `docs/README.md` 了解主題系統的設計架構和切換機制
+- 參考 `docs/component-api-reference.md` 中關於主題相關組件的 API 設計
+- 更新 `docs/state-management-guide.md` 記錄主題狀態管理的實作方式
+- 在 `docs/codebase-architecture.md` 中記錄主題系統的整體架構
 
 **預設主題**:
 
@@ -1156,12 +1160,12 @@
 4. Mock OpenAI 和其他外部服務
 5. 設定 CI 測試流程
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `src/lib/__tests__/` - 工具函數測試
-- `src/components/__tests__/` - 組件測試
-- `src/app/api/__tests__/` - API 測試
-- `vitest.setup.ts` - 測試設定
+- 請先閱讀 `docs/README.md` 了解專案的測試策略和單元測試架構
+- 參考 `docs/testing-setup-tutorial.md` 中關於單元測試的設定和最佳實踐
+- 更新 `docs/codebase-architecture.md` 記錄測試架構和 Mock 策略
+- 在 `docs/component-api-reference.md` 中記錄可測試組件的 API 設計
 
 **測試重點**:
 
@@ -1202,12 +1206,12 @@
 4. 設定跨瀏覽器測試
 5. 建立 CI 測試流程
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `tests/e2e/` - E2E 測試目錄
-- `tests/e2e/generate-slides.spec.ts` - 生成流程測試
-- `tests/e2e/edit-preview.spec.ts` - 編輯預覽測試
-- `tests/e2e/export.spec.ts` - 匯出功能測試
+- 請先閱讀 `docs/README.md` 了解 E2E 測試的策略和 Playwright 的使用方式
+- 參考 `docs/testing-setup-tutorial.md` 中關於端到端測試的設定指南
+- 更新 `docs/project-architecture-for-ai.md` 記錄測試流程和品質保證策略
+- 在專案根目錄的 `README.md` 中更新測試執行和 CI 相關說明
 
 **測試場景**:
 
@@ -1248,12 +1252,12 @@
 4. 建立 Docker 部署配置
 5. 設定 CI/CD 流程
 
-**需要建立的檔案**:
+**實作參考**:
 
-- `README.md` - 專案說明
-- `DEPLOYMENT.md` - 部署指南
-- `Dockerfile` - Docker 配置
-- `.github/workflows/ci.yml` - GitHub Actions
+- 請先閱讀 `docs/README.md` 了解專案的部署策略和效能優化指南
+- 參考 `docs/project-architecture-for-ai.md` 中關於生產環境優化的最佳實踐
+- 更新專案根目錄的 `README.md` 記錄部署流程和環境設定
+- 建立 `DEPLOYMENT.md` 提供詳細的部署指南和故障排除方式
 
 **優化重點**:
 
