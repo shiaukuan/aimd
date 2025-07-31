@@ -1,5 +1,5 @@
-// ABOUTME: Markdown 編輯器組件，支援語法高亮、行號顯示和捲軸同步
-// ABOUTME: 使用 highlight.js 提供即時語法著色，取代標準 textarea
+// ABOUTME: Markdown 編輯器組件，支援行號顯示和捲軸同步
+// ABOUTME: 提供基本的 Markdown 編輯功能，包含縮排和鍵盤操作
 
 'use client';
 
@@ -11,7 +11,6 @@ import React, {
   useMemo,
 } from 'react';
 import { cn } from '@/lib/utils';
-import { useMarkdownHighlight } from './useMarkdownHighlight';
 
 export interface MarkdownEditorProps {
   value: string;
@@ -56,27 +55,18 @@ export const MarkdownEditor = React.forwardRef<
     },
     [forwardedRef]
   );
-  const highlightRef = useRef<HTMLPreElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [isComposing, setIsComposing] = useState(false);
-
-  // 使用自定義 Hook 處理語法高亮
-  const { highlightedCode, updateHighlight } = useMarkdownHighlight(value);
 
   // 處理輸入變更
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const newValue = e.target.value;
       onChange(newValue);
-
-      // 延遲更新高亮，避免輸入法衝突
-      if (!isComposing) {
-        updateHighlight(newValue);
-      }
     },
-    [onChange, updateHighlight, isComposing]
+    [onChange]
   );
 
   // 處理輸入法組合事件
@@ -87,22 +77,17 @@ export const MarkdownEditor = React.forwardRef<
   const handleCompositionEnd = useCallback(
     (e: React.CompositionEvent<HTMLTextAreaElement>) => {
       setIsComposing(false);
-      const newValue = (e.target as HTMLTextAreaElement).value;
-      updateHighlight(newValue);
     },
-    [updateHighlight]
+    []
   );
 
   // 同步捲軸位置
   const syncScroll = useCallback(() => {
     const textarea = textareaRef.current;
-    const highlight = highlightRef.current;
     const lineNumbers = lineNumbersRef.current;
 
-    if (!textarea || !highlight || !lineNumbers) return;
+    if (!textarea || !lineNumbers) return;
 
-    highlight.scrollTop = textarea.scrollTop;
-    highlight.scrollLeft = textarea.scrollLeft;
     lineNumbers.scrollTop = textarea.scrollTop;
   }, []);
 
@@ -119,8 +104,8 @@ export const MarkdownEditor = React.forwardRef<
         if (e.shiftKey) {
           // Shift+Tab: 移除縮排
           const lines = value.split('\n');
-          const startLine = value.substr(0, start).split('\n').length - 1;
-          const endLine = value.substr(0, end).split('\n').length - 1;
+          const startLine = value.substring(0, start).split('\n').length - 1;
+          const endLine = value.substring(0, end).split('\n').length - 1;
 
           const newLines = lines.map((line, index) => {
             if (
@@ -128,7 +113,7 @@ export const MarkdownEditor = React.forwardRef<
               index <= endLine &&
               line.startsWith('  ')
             ) {
-              return line.substr(2);
+              return line.substring(2);
             }
             return line;
           });
@@ -176,10 +161,6 @@ export const MarkdownEditor = React.forwardRef<
     ));
   }, [value]);
 
-  // 同步高亮顯示位置和內容
-  useEffect(() => {
-    updateHighlight(value);
-  }, [value, updateHighlight]);
 
   // 設置捲軸同步監聽器
   useEffect(() => {
@@ -214,20 +195,6 @@ export const MarkdownEditor = React.forwardRef<
 
       {/* 編輯器容器 */}
       <div className="relative flex-1">
-        {/* 語法高亮顯示層 */}
-        <pre
-          ref={highlightRef}
-          className={cn(
-            'absolute inset-0 p-4 m-0 text-sm font-mono leading-relaxed',
-            'overflow-auto whitespace-pre-wrap break-words',
-            'text-foreground pointer-events-none select-none',
-            'hljs'
-          )}
-          style={style}
-          aria-hidden="true"
-          dangerouslySetInnerHTML={{ __html: highlightedCode }}
-        />
-
         {/* 文字輸入區 */}
         <textarea
           ref={mergedRef}
@@ -241,17 +208,16 @@ export const MarkdownEditor = React.forwardRef<
           placeholder={placeholder}
           readOnly={readOnly}
           className={cn(
-            'relative w-full h-full p-4 resize-none border-0 bg-transparent',
-            'focus:outline-none focus:ring-0 z-10',
+            'w-full h-full p-4 resize-none border-0 bg-transparent',
+            'focus:outline-none focus:ring-0',
             'font-mono text-sm leading-relaxed',
-            'text-transparent caret-foreground',
+            'text-foreground',
             'selection:bg-primary/20'
           )}
           style={{
             ...style,
-            color: 'transparent',
-            WebkitTextFillColor: 'transparent',
-            caretColor: 'currentColor',
+            tabSize: 2,
+            MozTabSize: 2,
           }}
           spellCheck={false}
           autoComplete="off"
