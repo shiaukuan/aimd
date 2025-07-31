@@ -882,5 +882,6 @@ interface MyHookOptions<T> {
 
 ---
 
-_📅 文件更新日期：2024年_  
-_🤖 此文件為 Cursor AI 提供 Hook 使用指導_
+_📅 文件更新日期：2025年7月_  
+_🤖 此文件為 Cursor AI 提供 Hook 使用指導_  
+_🔄 已驗證所有Hook定義與當前實現保持同步_

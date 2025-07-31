@@ -63,7 +63,7 @@ your-project/
 ### 1. 安裝 Vitest 相關套件
 
 ```bash
-pnpm add -D vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event @types/jsdom
+pnpm add -D vitest@^3.2.4 @vitejs/plugin-react@^4.7.0 jsdom@^26.1.0 @testing-library/react@^16.3.0 @testing-library/jest-dom@^6.6.4 @testing-library/user-event@^14.6.1 @vitest/coverage-v8@^3.2.4
 ```
 
 **套件說明：**
@@ -196,7 +196,7 @@ describe('cn utility function', () => {
 ### 1. 安裝 Playwright
 
 ```bash
-pnpm add -D @playwright/test
+pnpm add -D @playwright/test@^1.54.1
 pnpm playwright install
 ```
 
@@ -516,3 +516,9 @@ describe('User service', () => {
 - [Playwright 官方文檔](https://playwright.dev/)
 - [Testing Library 官方文檔](https://testing-library.com/)
 - [TDD 實踐指南](https://testdrivendevelopment.io/)
+
+---
+
+_📅 文件更新日期：2025年7月_  
+_🤖 此教學文件提供完整的測試環境設定指導_  
+_🔄 已更新至最新版本的測試套件和配置_

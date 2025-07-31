@@ -8,18 +8,18 @@
 
 ```
 src/types/
-├── index.ts         # 核心型別定義（投影片、編輯器、預覽、API）
 ├── editor.ts        # 編輯器專用型別（工具列、統計、動作）
-└── marp.ts          # Marp 相關型別（渲染、主題、錯誤）
+├── marp.ts          # Marp 相關型別（渲染、主題、錯誤）
+└── slidePreview.ts  # 投影片預覽型別（預覽狀態、縮圖、導航控制）
 ```
 
 ### 🎯 型別分類
 
 | 分類 | 檔案 | 包含內容 |
 |------|------|----------|
-| **核心型別** | `index.ts` | 基礎資料結構、應用狀態 |
 | **編輯器型別** | `editor.ts` | 編輯器元件、動作、統計 |
 | **Marp 型別** | `marp.ts` | 渲染選項、結果、錯誤 |
+| **投影片預覽型別** | `slidePreview.ts` | 預覽狀態、縮圖、導航控制 |
 
 ---
 
@@ -462,6 +462,107 @@ interface MarpEngineConfig {
 
 ---
 
+## 🖼️ 投影片預覽型別定義 (`types/slidePreview.ts`)
+
+### 縮圖相關型別
+
+```typescript
+// 投影片縮圖
+interface SlideThumbnail {
+  index: number;                           // 投影片索引
+  html: string;                            // 縮圖 HTML 內容
+  title?: string;                          // 投影片標題
+  dimensions: {
+    width: number;                         // 縮圖寬度
+    height: number;                        // 縮圖高度
+  };
+  isActive: boolean;                       // 是否為當前選中的投影片
+}
+```
+
+### 預覽狀態型別
+
+```typescript
+// 投影片預覽狀態
+interface SlidePreviewState {
+  currentSlide: number;                    // 當前投影片索引
+  totalSlides: number;                     // 總投影片數
+  zoomLevel: number;                       // 縮放級別
+  showThumbnails: boolean;                 // 是否顯示縮圖面板
+  isFullscreen: boolean;                   // 是否為全螢幕模式
+  thumbnailPanelWidth: number;             // 縮圖面板寬度
+}
+```
+
+### 控制相關型別
+
+```typescript
+// 導航控制
+interface SlideNavigationControls {
+  goToPrevious: () => void;                // 前往上一張投影片
+  goToNext: () => void;                    // 前往下一張投影片
+  goToFirst: () => void;                   // 前往第一張投影片
+  goToLast: () => void;                    // 前往最後一張投影片
+  goToSlide: (index: number) => void;      // 前往指定索引的投影片
+  canGoPrevious: boolean;                  // 是否可以前往上一張
+  canGoNext: boolean;                      // 是否可以前往下一張
+}
+
+// 縮放控制
+interface SlideZoomControls {
+  zoomIn: () => void;                      // 放大
+  zoomOut: () => void;                     // 縮小
+  resetZoom: () => void;                   // 重置縮放
+  setZoom: (level: number) => void;        // 設定縮放級別
+  fitToWindow: () => void;                 // 自適應縮放
+  currentZoom: number;                     // 當前縮放級別
+  availableZoomLevels: number[];           // 可用的縮放級別
+}
+```
+
+### 組件 Props 型別
+
+```typescript
+// 投影片預覽組件 Props
+interface SlidePreviewProps {
+  renderResult: MarpRenderResult | null;  // 渲染結果
+  className?: string;                      // CSS 類別名稱
+  initialSlide?: number;                   // 初始投影片索引
+  initialZoom?: number;                    // 初始縮放級別
+  showThumbnails?: boolean;                // 是否顯示縮圖面板
+  thumbnailPanelWidth?: number;            // 縮圖面板寬度
+  onSlideChange?: (index: number) => void; // 投影片變更回調
+  onZoomChange?: (level: number) => void;  // 縮放變更回調
+  onFullscreenToggle?: (isFullscreen: boolean) => void; // 全螢幕切換回調
+  onThumbnailToggle?: (show: boolean) => void; // 縮圖面板切換回調
+  enableKeyboardShortcuts?: boolean;       // 鍵盤快捷鍵是否啟用
+}
+```
+
+### 常數定義
+
+```typescript
+// 縮放級別類型
+type ZoomLevel = 0.25 | 0.5 | 0.75 | 1 | 1.25 | 1.5 | 2;
+
+// 可用縮放級別
+const ZOOM_LEVELS: ZoomLevel[] = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
+
+// 預設投影片尺寸
+const DEFAULT_SLIDE_DIMENSIONS = {
+  width: 1280,
+  height: 720,
+} as const;
+
+// 預設縮圖尺寸
+const DEFAULT_THUMBNAIL_SIZE = {
+  width: 160,
+  height: 90,
+} as const;
+```
+
+---
+
 ## 🔄 泛型型別
 
 ### 通用泛型
@@ -719,5 +820,6 @@ export type { /* 通用型別 */ };
 
 ---
 
-_📅 文件更新日期：2024年_  
-_🤖 此文件為 Cursor AI 提供型別定義指導_
+_📅 文件更新日期：2025年7月_  
+_🤖 此文件為 Cursor AI 提供型別定義指導_  
+_🔄 已新增投影片預覽系統的完整型別定義_

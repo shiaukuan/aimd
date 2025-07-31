@@ -6,15 +6,18 @@
 
 ### 技術棧
 
-- **前端框架**: Next.js 15 (App Router)
+- **前端框架**: Next.js 15.4.5 (App Router)
 - **程式語言**: TypeScript 5 (嚴格模式)
-- **包管理器**: pnpm
+- **React**: React 19.1.0 (最新版本)
+- **包管理器**: pnpm 9.0.0
 - **樣式**: Tailwind CSS v4
-- **UI 元件**: shadcn/ui + Radix UI
-- **驗證**: Zod
-- **測試**: Vitest (單元測試) + Playwright (E2E 測試)
-- **投影片引擎**: @marp-team/marp-core
-- **匯出功能**: pptxgenjs
+- **UI 元件**: shadcn/ui + Radix UI + Lucide React
+- **狀態管理**: Zustand 5.0.7
+- **驗證**: Zod 4.0.13
+- **測試**: Vitest 3.2.4 (單元測試) + Playwright 1.54.1 (E2E 測試)
+- **投影片引擎**: @marp-team/marp-core 4.1.0
+- **匯出功能**: pptxgenjs 4.0.1
+- **主題系統**: next-themes 0.4.6
 
 ## 專案結構
 
@@ -204,52 +207,72 @@ pnpm type-check            # TypeScript 類型檢查
 ### 已實現功能
 
 1. **基礎架構**
-   - ✅ Next.js 15 + TypeScript 5 設定
+   - ✅ Next.js 15.4.5 + TypeScript 5 設定
    - ✅ Tailwind CSS v4 配置
    - ✅ shadcn/ui 元件系統
    - ✅ 完整測試環境（Vitest + Playwright）
+   - ✅ Zustand 狀態管理
 
 2. **類型和驗證系統**
    - ✅ 完整 TypeScript 類型定義
    - ✅ Zod 驗證 schemas
-   - ✅ API 請求/回應類型
+   - ✅ 投影片預覽相關類型定義
+
+3. **基礎 UI 結構**
+   - ✅ 主版面佈局 (MainLayout, Header)
+   - ✅ 錯誤邊界處理 (ErrorBoundary)
+   - ✅ 分割面板系統 (SplitPanel)
+
+4. **Markdown 編輯器系統**
+   - ✅ 核心編輯器元件 (EditorPanel, MarkdownEditor)
+   - ✅ 編輯器工具列 (EditorToolbar)
+   - ✅ 狀態列顯示 (EditorStatusBar)
+   - ✅ 自動儲存功能 (useAutoSave)
+
+5. **投影片預覽系統**
+   - ✅ Marp Core 整合 (useMarpRenderer)
+   - ✅ 完整投影片預覽 (SlidePreview)
+   - ✅ 縮圖網格導航 (ThumbnailGrid)
+   - ✅ 投影片檢視器 (SlideViewer)
+   - ✅ 控制列 (SlideControlBar)
+   - ✅ 投影片導航和縮放 (useSlideControls)
+   - ✅ 縮圖生成系統 (useSlideThumbnails)
+   - ✅ 全螢幕模式支援
+   - ✅ 鍵盤快捷鍵
+
+6. **核心 Hook 系統**
+   - ✅ Marp 渲染管理 (useMarpRenderer)
+   - ✅ 投影片控制 (useSlideControls)
+   - ✅ 縮圖生成 (useSlideThumbnails)
+   - ✅ 自動儲存 (useAutoSave)
+   - ✅ 防抖處理 (useDebounce)
+   - ✅ 分割面板 (useSplitPanel)
+
+7. **狀態管理**
+   - ✅ 編輯器狀態管理 (EditorStore)
+   - ✅ 內容同步機制
+   - ✅ 錯誤狀態管理
 
 ### 待實現功能
 
-3. **基礎 UI 結構**
-   - 🚧 主版面佈局
-   - 🚧 導航元件
-   - 🚧 主題切換功能
-
-4. **Markdown 編輯器**
-   - 🚧 程式碼編輯器整合
-   - 🚧 即時預覽功能
-   - 🚧 語法高亮
-   - 🚧 快捷鍵支援
-
-5. **投影片預覽系統**
-   - 🚧 Marp Core 整合
-   - 🚧 投影片導航
-   - 🚧 全螢幕模式
-   - 🚧 縮放控制
-
-6. **AI 投影片生成**
+8. **AI 投影片生成**
    - 🚧 OpenAI API 整合
    - 🚧 生成表單界面
    - 🚧 進度追蹤
    - 🚧 錯誤處理
 
-7. **匯出功能**
+9. **匯出功能**
    - 🚧 PDF 匯出
    - 🚧 PPTX 匯出
    - 🚧 HTML 匯出
    - 🚧 圖片匯出
 
-8. **進階功能**
-   - 🚧 專案儲存/載入
-   - 🚧 範本系統
-   - 🚧 分享功能
-   - 🚧 協作編輯
+10. **進階功能**
+    - 🚧 專案儲存/載入
+    - 🚧 範本系統
+    - 🚧 分享功能
+    - 🚧 協作編輯
+    - 🚧 主題切換功能
 
 ## 配置檔案詳解
 
@@ -514,3 +537,9 @@ export async function handler(request: Request) {
 ```
 
 這個架構說明提供了 AI 繼續開發所需的所有關鍵資訊，包括技術棧、檔案結構、開發規範和實作模式。
+
+---
+
+_📅 文件更新日期：2025年7月_  
+_🤖 此文件專為 AI 協作開發設計_  
+_🔄 已更新以反映完整的投影片預覽系統和最新技術棧_
