@@ -12,7 +12,7 @@ describe('MainLayout', () => {
         <div data-testid="test-content">Test Content</div>
       </MainLayout>
     );
-    
+
     const content = screen.getByTestId('test-content');
     expect(content).toBeInTheDocument();
     expect(content).toHaveTextContent('Test Content');
@@ -24,10 +24,10 @@ describe('MainLayout', () => {
         <div>Content</div>
       </MainLayout>
     );
-    
+
     const header = screen.getByRole('banner');
     expect(header).toBeInTheDocument();
-    
+
     const main = screen.getByRole('main');
     expect(main).toBeInTheDocument();
   });
@@ -38,7 +38,7 @@ describe('MainLayout', () => {
         <div>Content</div>
       </MainLayout>
     );
-    
+
     const container = screen.getByTestId('main-layout-container');
     expect(container).toHaveClass('min-h-screen', 'bg-background');
   });
@@ -49,9 +49,9 @@ describe('MainLayout', () => {
         <div>Content</div>
       </MainLayout>
     );
-    
+
     const main = screen.getByRole('main');
-    expect(main).toHaveClass('container', 'mx-auto', 'px-4', 'py-8');
+    expect(main).toHaveClass('px-2', 'py-4');
   });
 
   it('should render Header component within layout', () => {
@@ -60,10 +60,10 @@ describe('MainLayout', () => {
         <div>Content</div>
       </MainLayout>
     );
-    
+
     const title = screen.getByRole('heading', { level: 1 });
     expect(title).toHaveTextContent('Markdown 投影片產生器');
-    
+
     const description = screen.getByText('使用 Markdown 輕鬆創建專業投影片');
     expect(description).toBeInTheDocument();
   });
@@ -74,12 +74,12 @@ describe('MainLayout', () => {
         <div data-testid="grid-content">Grid Content</div>
       </MainLayout>
     );
-    
+
     const container = screen.getByTestId('main-layout-container');
     expect(container).toHaveClass('min-h-screen');
-    
+
     const main = screen.getByRole('main');
-    expect(main).toHaveClass('container');
+    expect(main).toHaveClass('px-2', 'py-4');
   });
 
   it('should support responsive design', () => {
@@ -91,10 +91,10 @@ describe('MainLayout', () => {
         </div>
       </MainLayout>
     );
-    
+
     const col1 = screen.getByTestId('col-1');
     const col2 = screen.getByTestId('col-2');
-    
+
     expect(col1).toBeInTheDocument();
     expect(col2).toBeInTheDocument();
   });
@@ -105,16 +105,16 @@ describe('MainLayout', () => {
         <div>Accessible Content</div>
       </MainLayout>
     );
-    
+
     const header = screen.getByRole('banner');
     const main = screen.getByRole('main');
-    
+
     expect(header).toBeInTheDocument();
     expect(main).toBeInTheDocument();
-    
+
     // Both elements should be accessible
     expect(header).toHaveAttribute('class', 'border-b');
-    expect(main).toHaveAttribute('class', 'container mx-auto px-4 py-8');
+    expect(main).toHaveAttribute('class', 'px-2 py-4');
   });
 
   it('should allow custom props to be passed to children', () => {
@@ -123,13 +123,13 @@ describe('MainLayout', () => {
         Custom Component
       </div>
     );
-    
+
     render(
       <MainLayout>
         <CustomComponent className="custom-class" />
       </MainLayout>
     );
-    
+
     const customComponent = screen.getByTestId('custom-component');
     expect(customComponent).toHaveClass('custom-class');
   });

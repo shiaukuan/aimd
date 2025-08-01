@@ -1,7 +1,7 @@
 // ABOUTME: 自動儲存 hook，定期將編輯器內容儲存到 localStorage
 // ABOUTME: 支援自訂儲存間隔、手動儲存和儲存狀態監控
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { useEditorStore } from '@/store/editorStore';
 import { setStorageItem, getStorageItem } from '@/lib/storage';
 
@@ -38,69 +38,68 @@ const DEFAULT_OPTIONS: Required<UseAutoSaveOptions> = {
 };
 
 export function useAutoSave(options: UseAutoSaveOptions = {}) {
-  const opts = { ...DEFAULT_OPTIONS, ...options };
-  
-  const {
-    content,
-    isModified,
-    autoSaveEnabled,
-    updateSaveTime,
-    setError,
-  } = useEditorStore();
-  
+  const opts = useMemo(() => ({ ...DEFAULT_OPTIONS, ...options }), [options]);
+
+  const { content, isModified, autoSaveEnabled, updateSaveTime, setError } =
+    useEditorStore();
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isSavingRef = useRef(false);
   const saveCountRef = useRef(0);
   const lastSaveTimeRef = useRef<number | null>(null);
 
   // 執行儲存操作
-  const performSave = useCallback(async (
-    contentToSave: string, 
-    isManual: boolean = false
-  ): Promise<boolean> => {
-    if (isSavingRef.current && !isManual) {
-      return false;
-    }
+  const performSave = useCallback(
+    async (
+      contentToSave: string,
+      isManual: boolean = false
+    ): Promise<boolean> => {
+      if (isSavingRef.current && !isManual) {
+        return false;
+      }
 
-    // 驗證內容
-    if (!opts.validate(contentToSave)) {
-      const error = new Error('Content validation failed');
-      opts.onError(error);
-      setError('內容驗證失敗');
-      return false;
-    }
+      // 驗證內容
+      if (!opts.validate(contentToSave)) {
+        const error = new Error('Content validation failed');
+        opts.onError(error);
+        setError('內容驗證失敗');
+        return false;
+      }
 
-    try {
-      isSavingRef.current = true;
-      
-      // 儲存到 localStorage
-      const saveData = {
-        content: contentToSave,
-        timestamp: Date.now(),
-        version: '1.0',
-      };
-      
-      setStorageItem(opts.key, saveData);
-      
-      // 更新狀態
-      const saveTime = Date.now();
-      lastSaveTimeRef.current = saveTime;
-      saveCountRef.current += 1;
-      updateSaveTime();
-      
-      // 觸發成功回調
-      opts.onSave(contentToSave, saveTime);
-      
-      return true;
-    } catch (error) {
-      const errorObj = error instanceof Error ? error : new Error('Save failed');
-      opts.onError(errorObj);
-      setError(`儲存失敗: ${errorObj.message}`);
-      return false;
-    } finally {
-      isSavingRef.current = false;
-    }
-  }, [opts, updateSaveTime, setError]);
+      try {
+        isSavingRef.current = true;
+
+        // 儲存到 localStorage
+        const saveData = {
+          content: contentToSave,
+          timestamp: Date.now(),
+          version: '1.0',
+        };
+
+        setStorageItem(opts.key, saveData);
+
+        // 更新狀態
+        const saveTime = Date.now();
+        lastSaveTimeRef.current = saveTime;
+        saveCountRef.current += 1;
+        updateSaveTime();
+
+        // 觸發成功回調
+        opts.onSave(contentToSave, saveTime);
+
+        return true;
+      } catch (error) {
+        const errorObj =
+          error instanceof Error ? error : new Error('Save failed');
+        opts.onError(errorObj);
+        setError(`儲存失敗: ${errorObj.message}`);
+        return false;
+      } finally {
+        isSavingRef.current = false;
+      }
+    },
+    [opts, updateSaveTime, setError]
+  );
 
   // 手動儲存
   const save = useCallback(async (): Promise<boolean> => {
@@ -114,16 +113,23 @@ export function useAutoSave(options: UseAutoSaveOptions = {}) {
     hasData: boolean;
   } => {
     try {
-      const savedData = getStorageItem<{ content: string; timestamp: number } | null>(opts.key, null);
-      
-      if (savedData && typeof savedData === 'object' && 'content' in savedData) {
+      const savedData = getStorageItem<{
+        content: string;
+        timestamp: number;
+      } | null>(opts.key, null);
+
+      if (
+        savedData &&
+        typeof savedData === 'object' &&
+        'content' in savedData
+      ) {
         return {
           content: savedData.content,
           timestamp: savedData.timestamp || null,
           hasData: true,
         };
       }
-      
+
       return {
         content: '',
         timestamp: null,
@@ -173,8 +179,8 @@ export function useAutoSave(options: UseAutoSaveOptions = {}) {
 
   // 獲取自動儲存狀態
   const getStatus = useCallback((): AutoSaveStatus => {
-    const nextSaveTime = lastSaveTimeRef.current 
-      ? lastSaveTimeRef.current + opts.interval 
+    const nextSaveTime = lastSaveTimeRef.current
+      ? lastSaveTimeRef.current + opts.interval
       : null;
 
     return {

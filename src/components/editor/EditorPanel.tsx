@@ -60,10 +60,10 @@ export function EditorPanel({
     interval: settings?.autoSaveInterval || 30000,
     key: 'markdown-editor-content',
     immediate: false,
-    onSave: (content) => {
+    onSave: content => {
       callbacks?.onSave?.(content);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Auto save error:', error);
     },
   });
@@ -145,7 +145,7 @@ export function EditorPanel({
     (newContent: string) => {
       // 更新本地狀態
       setLocalContent(newContent);
-      
+
       // 同步到全域狀態 (debounced)
       debouncedSync(newContent);
 
@@ -174,7 +174,7 @@ export function EditorPanel({
 
   // 處理工具列動作
   const handleToolbarAction = useCallback(
-    async (action: EditorAction, data?: any) => {
+    async (action: EditorAction, data?: unknown) => {
       const textarea = markdownEditorRef.current;
       if (!textarea) return;
       const { selectionStart, selectionEnd } = textarea;
@@ -286,7 +286,8 @@ export function EditorPanel({
 
         case 'save':
           // 手動儲存：使用編輯器中的實際內容
-          const currentContent = markdownEditorRef.current?.value || localContent;
+          const currentContent =
+            markdownEditorRef.current?.value || localContent;
           const saveSuccess = await autoSave.save();
           if (saveSuccess) {
             callbacks?.onSave?.(currentContent);
@@ -378,7 +379,7 @@ export function EditorPanel({
     // 優先順序：1. savedContent 2. propContent 3. storeContent
     const { content: savedContent, hasData } = autoSave.loadSavedContent();
     let contentToUse = '';
-    
+
     if (hasData && savedContent.trim()) {
       contentToUse = savedContent;
       console.log('載入已儲存內容:', savedContent.slice(0, 50) + '...');
@@ -394,7 +395,14 @@ export function EditorPanel({
     }
 
     setIsInitialized(true);
-  }, [isInitialized, propContent, storeContent, localContent, autoSave, setStoreContent]);
+  }, [
+    isInitialized,
+    propContent,
+    storeContent,
+    localContent,
+    autoSave,
+    setStoreContent,
+  ]);
 
   // 監聽本地內容變化並同步到全域狀態（避免無限循環）
   useEffect(() => {
@@ -410,7 +418,7 @@ export function EditorPanel({
     <ErrorBoundaryWrapper
       title="編輯器錯誤"
       description="編輯器遇到錯誤，請嘗試重新載入"
-      onError={(error) => {
+      onError={error => {
         console.error('Editor panel error:', error);
         callbacks?.onError?.(error);
       }}
@@ -473,7 +481,9 @@ export function EditorPanel({
             readOnly={readOnly}
             className="w-full h-full"
             style={{
-              fontSize: settings?.fontSize ? `${settings.fontSize}px` : undefined,
+              fontSize: settings?.fontSize
+                ? `${settings.fontSize}px`
+                : undefined,
               tabSize: settings?.tabSize || 2,
             }}
             data-testid="markdown-editor"

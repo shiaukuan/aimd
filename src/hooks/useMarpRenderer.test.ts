@@ -4,7 +4,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useMarpRenderer, useSimpleMarpRenderer } from './useMarpRenderer';
-import { MarpError } from '@/types/marp';
 
 // Mock Marp 引擎
 vi.mock('@/lib/marp', () => ({
@@ -26,7 +25,7 @@ vi.mock('@/lib/marp', () => ({
 
 // Mock useDebounce
 vi.mock('./useDebounce', () => ({
-  useDebounce: vi.fn((callback, delay) => ({
+  useDebounce: vi.fn(callback => ({
     debouncedCallback: callback,
     cancel: vi.fn(),
     flush: vi.fn(),
@@ -116,7 +115,9 @@ describe('useMarpRenderer', () => {
       };
 
       const { getMarpEngine } = await import('@/lib/marp');
-      vi.mocked(getMarpEngine).mockReturnValue(mockEngine as any);
+      vi.mocked(getMarpEngine).mockReturnValue(
+        mockEngine as unknown as ReturnType<typeof getMarpEngine>
+      );
 
       act(() => {
         void result.current.render('# 測試');
@@ -143,7 +144,9 @@ describe('useMarpRenderer', () => {
       };
 
       const { getMarpEngine } = await import('@/lib/marp');
-      vi.mocked(getMarpEngine).mockReturnValue(mockEngine as any);
+      vi.mocked(getMarpEngine).mockReturnValue(
+        mockEngine as unknown as ReturnType<typeof getMarpEngine>
+      );
 
       const { result } = renderHook(() => useMarpRenderer());
       const renderOptions = { theme: 'gaia', html: false };
@@ -239,13 +242,13 @@ describe('useSimpleMarpRenderer', () => {
   it('應能成功渲染', async () => {
     const { result } = renderHook(() => useSimpleMarpRenderer());
 
-    let renderResult;
+    let renderResult: unknown;
     await act(async () => {
       renderResult = await result.current.renderMarkdown('# 測試');
     });
 
     expect(renderResult).toBeDefined();
-    expect(renderResult?.html).toContain('<section>');
+    expect((renderResult as { html?: string })?.html).toContain('<section>');
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
   });
@@ -269,7 +272,9 @@ describe('useSimpleMarpRenderer', () => {
     };
 
     const { getMarpEngine } = await import('@/lib/marp');
-    vi.mocked(getMarpEngine).mockReturnValue(mockEngine as any);
+    vi.mocked(getMarpEngine).mockReturnValue(
+      mockEngine as unknown as ReturnType<typeof getMarpEngine>
+    );
 
     let renderResult;
     await act(async () => {
@@ -290,7 +295,9 @@ describe('useSimpleMarpRenderer', () => {
     };
 
     const { getMarpEngine } = await import('@/lib/marp');
-    vi.mocked(getMarpEngine).mockReturnValue(mockEngine as any);
+    vi.mocked(getMarpEngine).mockReturnValue(
+      mockEngine as unknown as ReturnType<typeof getMarpEngine>
+    );
 
     await act(async () => {
       await result.current.renderMarkdown('# 測試');

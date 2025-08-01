@@ -37,8 +37,8 @@ test.describe('Layout Components - Header and MainLayout', () => {
     // Check DOM order - header should come before main
     const headerPosition = await header.evaluate(el => {
       let position = 0;
-      let current = el;
-      while (current.previousElementSibling) {
+      let current: Element | null = el;
+      while (current?.previousElementSibling) {
         position++;
         current = current.previousElementSibling;
       }
@@ -47,8 +47,8 @@ test.describe('Layout Components - Header and MainLayout', () => {
 
     const mainPosition = await main.evaluate(el => {
       let position = 0;
-      let current = el;
-      while (current.previousElementSibling) {
+      let current: Element | null = el;
+      while (current?.previousElementSibling) {
         position++;
         current = current.previousElementSibling;
       }
@@ -65,7 +65,7 @@ test.describe('Layout Components - Header and MainLayout', () => {
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto('/');
 
-    let header = page.locator('header');
+    const header = page.locator('header');
     await expect(header).toBeVisible();
 
     // Test tablet

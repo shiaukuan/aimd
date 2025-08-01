@@ -3,7 +3,13 @@
 
 'use client';
 
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+} from 'react';
 import { Marp } from '@marp-team/marp-core';
 import {
   ChevronLeft,
@@ -58,8 +64,8 @@ export default function PreviewPanel({
 
   const previewRef = useRef<HTMLDivElement>(null);
   const marpRef = useRef<Marp | null>(null);
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const scalingWrapperRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const scalingWrapperRef = useRef<HTMLDivElement | null>(null);
 
   const scalingStyle = useSlideScaling({
     viewportRef,
@@ -165,30 +171,39 @@ export default function PreviewPanel({
   }, [content, enableSync, debouncedRender]);
 
   // 投影片導航函數
-  const goToSlide = (slideIndex: number) => {
-    if (!slideData) return;
+  const goToSlide = useCallback(
+    (slideIndex: number) => {
+      if (!slideData) return;
 
-    const newIndex = Math.max(
-      0,
-      Math.min(slideIndex, slideData.slideCount - 1)
-    );
-    setCurrentSlide(newIndex);
+      const newIndex = Math.max(
+        0,
+        Math.min(slideIndex, slideData.slideCount - 1)
+      );
+      setCurrentSlide(newIndex);
 
-    // 滾動到對應投影片
-    const slideElement = previewRef.current?.querySelector(
-      `section:nth-child(${newIndex + 1})`
-    );
-    if (slideElement) {
-      slideElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+      // 滾動到對應投影片
+      const slideElement = previewRef.current?.querySelector(
+        `section:nth-child(${newIndex + 1})`
+      );
+      if (slideElement) {
+        slideElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    },
+    [slideData]
+  );
 
-  const nextSlide = () => goToSlide(currentSlide + 1);
-  const prevSlide = () => goToSlide(currentSlide - 1);
-  const resetToFirstSlide = () => goToSlide(0);
+  const nextSlide = useCallback(
+    () => goToSlide(currentSlide + 1),
+    [goToSlide, currentSlide]
+  );
+  const prevSlide = useCallback(
+    () => goToSlide(currentSlide - 1),
+    [goToSlide, currentSlide]
+  );
+  const resetToFirstSlide = useCallback(() => goToSlide(0), [goToSlide]);
 
   // 全螢幕切換
-  const toggleFullscreen = async () => {
+  const toggleFullscreen = useCallback(async () => {
     if (!previewRef.current) return;
 
     try {
@@ -202,7 +217,7 @@ export default function PreviewPanel({
     } catch (error) {
       console.warn('Fullscreen toggle failed:', error);
     }
-  };
+  }, [isFullscreen]);
 
   // 監聽全螢幕變化
   useEffect(() => {
@@ -249,7 +264,15 @@ export default function PreviewPanel({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [slideData, currentSlide]);
+  }, [
+    slideData,
+    currentSlide,
+    prevSlide,
+    nextSlide,
+    resetToFirstSlide,
+    goToSlide,
+    toggleFullscreen,
+  ]);
 
   // 生成內聯樣式
   const inlineStyles = useMemo(() => {

@@ -1,7 +1,7 @@
 // ABOUTME: 投影片導航和縮放控制 Hook
 // ABOUTME: 提供完整的投影片導航、縮放和鍵盤快捷鍵功能
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import {
   SlideNavigationControls,
   SlidePreviewState,
@@ -57,52 +57,52 @@ export function useSlideControls(
   stateRef.current = state;
 
   // 投影片導航控制
-  const navigation: SlideNavigationControls = {
-    goToPrevious: useCallback(() => {
-      const newIndex = Math.max(0, state.currentSlide - 1);
-      if (newIndex !== state.currentSlide) {
-        setState(prev => ({ ...prev, currentSlide: newIndex }));
-        onSlideChange?.(newIndex);
-      }
-    }, [state.currentSlide, onSlideChange]),
+  const navigation: SlideNavigationControls = useMemo(
+    () => ({
+      goToPrevious: () => {
+        const newIndex = Math.max(0, state.currentSlide - 1);
+        if (newIndex !== state.currentSlide) {
+          setState(prev => ({ ...prev, currentSlide: newIndex }));
+          onSlideChange?.(newIndex);
+        }
+      },
 
-    goToNext: useCallback(() => {
-      const newIndex = Math.min(totalSlides - 1, state.currentSlide + 1);
-      if (newIndex !== state.currentSlide) {
-        setState(prev => ({ ...prev, currentSlide: newIndex }));
-        onSlideChange?.(newIndex);
-      }
-    }, [state.currentSlide, totalSlides, onSlideChange]),
+      goToNext: () => {
+        const newIndex = Math.min(totalSlides - 1, state.currentSlide + 1);
+        if (newIndex !== state.currentSlide) {
+          setState(prev => ({ ...prev, currentSlide: newIndex }));
+          onSlideChange?.(newIndex);
+        }
+      },
 
-    goToFirst: useCallback(() => {
-      if (state.currentSlide !== 0) {
-        setState(prev => ({ ...prev, currentSlide: 0 }));
-        onSlideChange?.(0);
-      }
-    }, [state.currentSlide, onSlideChange]),
+      goToFirst: () => {
+        if (state.currentSlide !== 0) {
+          setState(prev => ({ ...prev, currentSlide: 0 }));
+          onSlideChange?.(0);
+        }
+      },
 
-    goToLast: useCallback(() => {
-      const lastIndex = totalSlides - 1;
-      if (state.currentSlide !== lastIndex) {
-        setState(prev => ({ ...prev, currentSlide: lastIndex }));
-        onSlideChange?.(lastIndex);
-      }
-    }, [state.currentSlide, totalSlides, onSlideChange]),
+      goToLast: () => {
+        const lastIndex = totalSlides - 1;
+        if (state.currentSlide !== lastIndex) {
+          setState(prev => ({ ...prev, currentSlide: lastIndex }));
+          onSlideChange?.(lastIndex);
+        }
+      },
 
-    goToSlide: useCallback(
-      (index: number) => {
+      goToSlide: (index: number) => {
         const clampedIndex = Math.max(0, Math.min(index, totalSlides - 1));
         if (clampedIndex !== state.currentSlide) {
           setState(prev => ({ ...prev, currentSlide: clampedIndex }));
           onSlideChange?.(clampedIndex);
         }
       },
-      [state.currentSlide, totalSlides, onSlideChange]
-    ),
 
-    canGoPrevious: state.currentSlide > 0,
-    canGoNext: state.currentSlide < totalSlides - 1,
-  };
+      canGoPrevious: state.currentSlide > 0,
+      canGoNext: state.currentSlide < totalSlides - 1,
+    }),
+    [state.currentSlide, totalSlides, onSlideChange]
+  );
 
   // 切換縮圖面板
   const toggleThumbnails = useCallback(() => {

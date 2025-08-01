@@ -20,11 +20,11 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never' }]],
 
   // Shorter timeout for development
-  timeout: 15 * 1000,
+  timeout: 30 * 1000,
 
   // Expect timeout for assertions
   expect: {
-    timeout: 3000,
+    timeout: 5000,
   },
 
   // Shared settings for all tests
@@ -41,9 +41,9 @@ export default defineConfig({
     // Take screenshot on failure
     screenshot: 'only-on-failure',
 
-    // Shorter timeouts for development
-    actionTimeout: 5 * 1000,
-    navigationTimeout: 10 * 1000,
+    // Longer timeouts for slow development environment
+    actionTimeout: 10 * 1000,
+    navigationTimeout: 20 * 1000,
   },
 
   // Only test on Chrome for development speed

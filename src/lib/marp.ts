@@ -155,7 +155,6 @@ class MarpEngine {
       // 檢查基本的 Marp 語法
       const lines = markdown.split('\n');
       let inCodeBlock = false;
-      let slideCount = 0;
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
@@ -174,7 +173,7 @@ class MarpEngine {
 
         // 檢查投影片分隔符
         if (line.trim() === '---') {
-          slideCount++;
+          // 投影片分隔符
         }
 
         // 檢查 HTML 註釋格式
@@ -348,7 +347,7 @@ class MarpEngine {
 
     // 備選：尋找粗體文字
     const boldMatch = content.match(/<(strong|b)[^>]*>(.*?)<\/(strong|b)>/);
-    if (boldMatch) {
+    if (boldMatch && boldMatch[2]) {
       return boldMatch[2].replace(/<[^>]*>/g, '').trim();
     }
 
@@ -417,14 +416,25 @@ class MarpEngine {
       message = '未知錯誤';
     }
 
-    return {
+    const result: MarpError = {
       type,
       message,
-      details,
-      line,
-      column,
-      originalError,
     };
+
+    if (details !== undefined) {
+      result.details = details;
+    }
+    if (line !== undefined) {
+      result.line = line;
+    }
+    if (column !== undefined) {
+      result.column = column;
+    }
+    if (originalError !== undefined) {
+      result.originalError = originalError;
+    }
+
+    return result;
   }
 }
 

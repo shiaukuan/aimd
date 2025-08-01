@@ -1,15 +1,14 @@
-// ABOUTME: 這個 hook 用於計算和應用投影片的響應式縮放
-// ABOUTME: 它會監聽容器尺寸變化，並回傳一個 style 物件來保持投影片的長寬比
+// ABOUTME: 投影片縮放和自適應縮放控制 Hook
+// ABOUTME: 根據視窗大小自動調整投影片的顯示比例和位置
 
 import { useState, useLayoutEffect, RefObject } from 'react';
 
-const SLIDE_ASPECT_RATIO = 16 / 9;
 const SLIDE_BASE_WIDTH = 1280;
 const SLIDE_BASE_HEIGHT = 720;
 
 interface UseSlideScalingOptions {
-  viewportRef: RefObject<HTMLDivElement>;
-  wrapperRef: RefObject<HTMLDivElement>;
+  viewportRef: RefObject<HTMLDivElement | null>;
+  wrapperRef: RefObject<HTMLDivElement | null>;
   isRendered: boolean;
 }
 

@@ -1,7 +1,15 @@
 // ABOUTME: 編輯器組件專用的型別定義檔案
 // ABOUTME: 包含工具列、編輯器面板、狀態管理等相關型別
 
-import { EditorState, EditorSettings } from './index';
+// 編輯器設定
+export interface EditorSettings {
+  autoSave: boolean;
+  autoSaveInterval: number;
+  fontSize: number;
+  tabSize: number;
+  wordWrap: boolean;
+  lineNumbers: boolean;
+}
 
 // 編輯器統計資訊
 export interface EditorStats {
@@ -35,7 +43,7 @@ export interface ToolbarGroup {
 }
 
 // 編輯器動作類型
-export type EditorAction = 
+export type EditorAction =
   | 'new'
   | 'open'
   | 'save'
@@ -65,8 +73,12 @@ export interface EditorCallbacks {
   onChange?: (content: string, stats: EditorStats) => void;
   onSave?: (content: string) => void;
   onExport?: (content: string, format: string) => void;
-  onAction?: (action: EditorAction, data?: any) => void;
-  onSelectionChange?: (start: number, end: number, selectedText: string) => void;
+  onAction?: (action: EditorAction, data?: unknown) => void;
+  onSelectionChange?: (
+    start: number,
+    end: number,
+    selectedText: string
+  ) => void;
   onCursorChange?: (line: number, column: number) => void;
   onError?: (error: Error) => void;
 }
@@ -89,7 +101,7 @@ export interface EditorToolbarProps {
   showFormatting?: boolean;
   showInsertOptions?: boolean;
   showViewOptions?: boolean;
-  onAction?: (action: EditorAction, data?: any) => void;
+  onAction?: (action: EditorAction, data?: unknown) => void;
   activeFormats?: EditorAction[];
 }
 
@@ -99,7 +111,7 @@ export interface EditorStatusBarProps {
   isModified?: boolean;
   lastSaved?: Date | null;
   className?: string;
-  showDetailedStats?: boolean;  
+  showDetailedStats?: boolean;
   autoSaveEnabled?: boolean;
   syncStatus?: {
     isSync: boolean;

@@ -16,11 +16,18 @@ afterEach(() => {
 
 // Mock IntersectionObserver (commonly needed for UI components)
 global.IntersectionObserver = class IntersectionObserver {
+  root = null;
+  rootMargin = '';
+  thresholds = [];
+
   constructor() {}
   disconnect() {}
   observe() {}
   unobserve() {}
-};
+  takeRecords() {
+    return [];
+  }
+} as unknown as typeof IntersectionObserver;
 
 // Mock ResizeObserver (commonly needed for responsive components)
 global.ResizeObserver = class ResizeObserver {
@@ -47,12 +54,12 @@ Object.defineProperty(window, 'matchMedia', {
 
 // Mock localStorage and sessionStorage
 const createStorageMock = () => ({
-  getItem: (key: string) => null,
-  setItem: (key: string, value: string) => {},
-  removeItem: (key: string) => {},
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
   clear: () => {},
   length: 0,
-  key: (index: number) => null,
+  key: () => null,
 });
 
 Object.defineProperty(window, 'localStorage', {

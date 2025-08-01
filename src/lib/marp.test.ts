@@ -16,11 +16,10 @@ vi.mock('@marp-team/marp-core', () => ({
   Marp: vi.fn().mockImplementation(() => ({
     render: vi.fn().mockImplementation(markdown => {
       // 模擬根據內容返回不同的結果
-      const slideCount = (markdown.match(/---/g) || []).length + 1;
       const sections = markdown
         .split('---')
         .map(
-          (section, index) =>
+          (section: string, index: number) =>
             `<section><h1>${section.includes('#') ? section.match(/# (.+)/)?.[1] || `Test Slide ${index + 1}` : `Test Slide ${index + 1}`}</h1>${section.includes('```javascript') ? '<code>javascript</code>' : ''}</section>`
         )
         .join('');
@@ -115,7 +114,7 @@ function hello() {
       };
 
       const engineWithError = new MarpEngine();
-      (engineWithError as any).marp = mockMarp;
+      (engineWithError as unknown as { marp: typeof mockMarp }).marp = mockMarp;
 
       await expect(engineWithError.render('# 測試')).rejects.toThrow();
     });
@@ -127,7 +126,8 @@ function hello() {
       };
 
       const engineWithEmptyResult = new MarpEngine();
-      (engineWithEmptyResult as any).marp = mockMarp;
+      (engineWithEmptyResult as unknown as { marp: typeof mockMarp }).marp =
+        mockMarp;
 
       await expect(engineWithEmptyResult.render('# 測試')).rejects.toThrow(
         '渲染結果為空，請檢查 Markdown 格式'
@@ -187,8 +187,8 @@ function hello() {
       const result = engine.validateMarkdown('');
       expect(result.isValid).toBe(false);
       expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].type).toBe('parse');
-      expect(result.errors[0].message).toBe('Markdown 內容為空');
+      expect(result.errors[0]?.type).toBe('parse');
+      expect(result.errors[0]?.message).toBe('Markdown 內容為空');
     });
 
     it('應檢測未關閉的 HTML 註釋', () => {
@@ -322,6 +322,6 @@ describe('投影片解析', () => {
     const markdown = '# 我的標題\n\n內容';
     const result = await engine.render(markdown);
 
-    expect(result.slides[0].title).toBe('我的標題');
+    expect(result.slides[0]?.title).toBe('我的標題');
   });
 });

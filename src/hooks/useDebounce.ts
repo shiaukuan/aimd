@@ -11,19 +11,20 @@ export interface UseDebounceOptions {
 
 /**
  * useDebounce hook
- * 
+ *
  * @param callback - 要執行的回調函數
  * @param delay - 延遲時間（毫秒），預設 300ms
  * @param options - 選項配置
  * @returns debounced 函數和取消函數
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useDebounce<T extends (...args: any[]) => any>(
   callback: T,
   delay: number = 300,
   options: UseDebounceOptions = {}
 ) {
   const { leading = false, trailing = true } = options;
-  
+
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const callbackRef = useRef(callback);
   const lastInvokeTimeRef = useRef(0);
@@ -37,7 +38,7 @@ export function useDebounce<T extends (...args: any[]) => any>(
   const debouncedCallback = useCallback(
     (...args: Parameters<T>) => {
       const now = Date.now();
-      
+
       // 清除之前的計時器
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -100,7 +101,7 @@ export function useDebounce<T extends (...args: any[]) => any>(
 /**
  * useDebounceValue hook
  * 用於防抖動數值變化
- * 
+ *
  * @param value - 要防抖的值
  * @param delay - 延遲時間（毫秒）
  * @returns 防抖後的值
@@ -138,4 +139,3 @@ export function useDebounceValue<T>(value: T, delay: number = 300): T {
 
   return debouncedValue;
 }
-

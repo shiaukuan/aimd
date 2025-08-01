@@ -41,9 +41,7 @@ test.describe('Basic App Functionality', () => {
   });
 
   // Phase 1 完成：主題切換功能預期在 Phase 7 實作
-  test.skip('should handle dark mode toggle (if implemented)', async ({
-    page,
-  }) => {
+  test.skip('should handle dark mode toggle (if implemented)', async () => {
     // 預期在 Phase 7 實作：主題切換功能
     // 目前專注於基礎架構和核心功能
   });
@@ -93,7 +91,7 @@ test.describe('Basic App Functionality', () => {
 
       // The page should still render basic content even without network
       await expect(page.locator('body')).toBeVisible();
-    } catch (error) {
+    } catch {
       // If the page fails to load, that's expected in offline mode
       // This test is mainly to ensure no crashes occur
     }
