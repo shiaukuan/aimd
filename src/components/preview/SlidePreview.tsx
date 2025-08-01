@@ -16,11 +16,7 @@ export default function SlidePreview({
   renderResult,
   className,
   initialSlide = 0,
-  initialZoom = 0.5,
-  showThumbnails = true,
-  thumbnailPanelWidth = 200,
   onSlideChange,
-  onZoomChange,
   onFullscreenToggle,
   onThumbnailToggle,
   enableKeyboardShortcuts = true,
@@ -34,18 +30,14 @@ export default function SlidePreview({
   const {
     state,
     navigation,
-    zoom,
     toggleThumbnails,
     toggleFullscreen,
-    setThumbnailPanelWidth,
   } = useSlideControls({
     totalSlides,
     initialSlide,
-    initialZoom,
     enableKeyboardShortcuts,
-    onSlideChange,
-    onZoomChange,
-    onFullscreenToggle,
+    ...(onSlideChange && { onSlideChange }),
+    ...(onFullscreenToggle && { onFullscreenToggle }),
   });
 
   // 使用縮圖生成 Hook
@@ -119,7 +111,6 @@ export default function SlidePreview({
           <div className="flex-1 overflow-auto">
             <ThumbnailGrid
               thumbnails={thumbnails}
-              currentSlide={state.currentSlide}
               onThumbnailClick={handleThumbnailClick}
               className="p-2"
             />
@@ -132,7 +123,6 @@ export default function SlidePreview({
         {/* 控制列 */}
         <SlideControlBar
           navigation={navigation}
-          zoom={zoom}
           slideInfo={{
             current: state.currentSlide,
             total: totalSlides,
@@ -151,7 +141,6 @@ export default function SlidePreview({
             <SlideViewer
               slideHtml={currentSlideContent.content}
               slideCss={renderResult.css}
-              zoomLevel={state.zoomLevel}
               centered={true}
               className="h-full"
             />

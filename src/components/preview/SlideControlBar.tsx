@@ -9,14 +9,9 @@ import {
   ChevronRight,
   SkipBack,
   SkipForward,
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
   Maximize2,
   Minimize2,
   Grid3X3,
-  Minus,
-  Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -24,7 +19,6 @@ import { SlideControlBarProps } from '@/types/slidePreview';
 
 export function SlideControlBar({
   navigation,
-  zoom,
   slideInfo,
   showThumbnailToggle = true,
   thumbnailsVisible = true,
@@ -82,41 +76,6 @@ export function SlideControlBar({
         </Button>
       </div>
 
-      {/* 中間：縮放控制 */}
-      <div className="flex items-center space-x-1">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={zoom.zoomOut}
-          disabled={zoom.currentZoom <= zoom.availableZoomLevels[0]}
-          title="縮小 (Ctrl + -)"
-        >
-          <Minus className="h-4 w-4" />
-        </Button>
-        
-        <div className="mx-2 px-3 py-1 bg-muted rounded text-sm font-medium min-w-[60px] text-center">
-          {Math.round(zoom.currentZoom * 100)}%
-        </div>
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={zoom.zoomIn}
-          disabled={zoom.currentZoom >= zoom.availableZoomLevels[zoom.availableZoomLevels.length - 1]}
-          title="放大 (Ctrl + +)"
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={zoom.resetZoom}
-          title="重置縮放 (Ctrl + 0)"
-        >
-          <RotateCcw className="h-4 w-4" />
-        </Button>
-      </div>
 
       {/* 右側：視圖控制 */}
       <div className="flex items-center space-x-1">

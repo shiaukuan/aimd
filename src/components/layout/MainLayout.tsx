@@ -9,11 +9,12 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div data-testid="main-layout-container" className="min-h-screen bg-background">
+    <div
+      data-testid="main-layout-container"
+      className="min-h-screen bg-background"
+    >
       <Header />
-      <main className="container mx-auto px-4 py-8">
-        {children}
-      </main>
+      <main className="px-2 py-4">{children}</main>
     </div>
   );
 }

@@ -114,12 +114,12 @@ export function useAutoSave(options: UseAutoSaveOptions = {}) {
     hasData: boolean;
   } => {
     try {
-      const savedData = getStorageItem(opts.key, null);
+      const savedData = getStorageItem<{ content: string; timestamp: number } | null>(opts.key, null);
       
       if (savedData && typeof savedData === 'object' && 'content' in savedData) {
         return {
-          content: savedData.content as string,
-          timestamp: (savedData.timestamp as number) || null,
+          content: savedData.content,
+          timestamp: savedData.timestamp || null,
           hasData: true,
         };
       }

@@ -159,6 +159,8 @@ class MarpEngine {
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
+        if (!line) continue;
+        
         const lineNumber = i + 1;
 
         // 檢查程式碼區塊
@@ -246,15 +248,17 @@ class MarpEngine {
 
       while ((match = sectionRegex.exec(html)) !== null) {
         const slideContent = match[1];
+        if (!slideContent) continue;
+        
         const slideNotes = this.extractSlideNotes(markdown, slideIndex);
         const slideClass = this.extractSlideClass(match[0]);
         const slideTitle = this.extractSlideTitle(slideContent);
 
         slides.push({
           content: slideContent,
-          notes: slideNotes,
-          title: slideTitle,
-          class: slideClass,
+          ...(slideNotes && { notes: slideNotes }),
+          ...(slideTitle && { title: slideTitle }),
+          ...(slideClass && { class: slideClass }),
         });
 
         slideIndex++;
@@ -262,9 +266,10 @@ class MarpEngine {
 
       // 如果沒有找到 section，創建單一投影片
       if (slides.length === 0 && html.trim()) {
+        const title = this.extractSlideTitle(html);
         slides.push({
           content: html,
-          title: this.extractSlideTitle(html),
+          ...(title && { title }),
         });
       }
 
@@ -287,7 +292,7 @@ class MarpEngine {
     let match;
 
     while ((match = commentRegex.exec(markdown)) !== null) {
-      const comment = match[1].trim();
+      const comment = match[1]?.trim();
       if (comment && !comment.startsWith('_')) { // 排除 Marp 指令
         comments.push(comment);
       }
@@ -311,7 +316,7 @@ class MarpEngine {
     });
 
     // 找到對應投影片的範圍
-    const startLine = slideIndex === 0 ? 0 : slideDelimiters[slideIndex - 1] + 1;
+    const startLine = slideIndex === 0 ? 0 : (slideDelimiters[slideIndex - 1] ?? 0) + 1;
     const endLine = slideIndex < slideDelimiters.length ? slideDelimiters[slideIndex] : lines.length;
     
     const slideLines = lines.slice(startLine, endLine);
@@ -337,7 +342,7 @@ class MarpEngine {
   private extractSlideTitle(content: string): string | undefined {
     // 尋找第一個標題
     const titleMatch = content.match(/<h([1-6])[^>]*>(.*?)<\/h[1-6]>/);
-    if (titleMatch) {
+    if (titleMatch && titleMatch[2]) {
       return titleMatch[2].replace(/<[^>]*>/g, '').trim();
     }
 

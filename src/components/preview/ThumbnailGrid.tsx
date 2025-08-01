@@ -9,10 +9,8 @@ import { ThumbnailGridProps, DEFAULT_THUMBNAIL_SIZE } from '@/types/slidePreview
 
 export function ThumbnailGrid({
   thumbnails,
-  currentSlide,
   onThumbnailClick,
   thumbnailSize = DEFAULT_THUMBNAIL_SIZE,
-  itemsPerRow = 1,
   showSlideNumbers = true,
   className,
 }: ThumbnailGridProps) {

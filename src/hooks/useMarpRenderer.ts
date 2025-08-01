@@ -8,7 +8,6 @@ import {
   MarpRenderResult,
   MarpError,
   MarpRenderOptions,
-  MarpRenderState,
   MarpRenderStatus,
 } from '@/types/marp';
 
@@ -92,7 +91,10 @@ export function useMarpRenderer(
       onRenderStart?.();
 
       // 記錄渲染參數
-      lastRenderParams.current = { markdown, options: renderOptions };
+      lastRenderParams.current = { 
+        markdown,
+        ...(renderOptions && { options: renderOptions })
+      };
 
       // 合併渲染選項
       const finalOptions = { ...defaultRenderOptions, ...renderOptions };
@@ -226,7 +228,7 @@ export function useMarpLiveRenderer(
 
       const marpEngine = getMarpEngine();
       try {
-        const renderResult = await marpEngine.render(newMarkdown, options.defaultRenderOptions);
+        await marpEngine.render(newMarkdown, options.defaultRenderOptions);
         // 這裡需要通過其他方式更新狀態，因為我們無法直接使用 render 函數
       } catch (error) {
         console.error('即時渲染失敗:', error);

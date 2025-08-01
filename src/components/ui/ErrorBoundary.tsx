@@ -329,7 +329,7 @@ export function ErrorBoundaryWrapper({
 }: ErrorBoundaryWrapperProps) {
   return (
     <ErrorBoundary
-      onError={onError || undefined}
+      {...(onError && { onError })}
       {...props}
     >
       {children}

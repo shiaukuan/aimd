@@ -37,7 +37,6 @@ export function useDebounce<T extends (...args: any[]) => any>(
   const debouncedCallback = useCallback(
     (...args: Parameters<T>) => {
       const now = Date.now();
-      const timeSinceLastInvoke = now - lastInvokeTimeRef.current;
       
       // 清除之前的計時器
       if (timeoutRef.current) {

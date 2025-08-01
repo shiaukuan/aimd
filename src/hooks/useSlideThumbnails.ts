@@ -11,8 +11,6 @@ export interface UseSlideThumbnailsOptions {
     width: number;
     height: number;
   };
-  /** 是否啟用縮圖快取 */
-  enableCache?: boolean;
   /** 是否顯示投影片編號 */
   showSlideNumbers?: boolean;
 }
@@ -35,15 +33,14 @@ export function useSlideThumbnails(
 ): UseSlideThumbnailsReturn {
   const {
     thumbnailSize = DEFAULT_THUMBNAIL_SIZE,
-    enableCache = true,
     showSlideNumbers = true,
   } = options;
 
   // 從 Marp 渲染結果中提取投影片標題
-  const extractSlideTitle = useCallback((slideHtml: string, slideIndex: number): string | undefined => {
+  const extractSlideTitle = useCallback((slideHtml: string, slideIndex: number): string => {
     // 嘗試從 HTML 中提取第一個標題
     const titleMatch = slideHtml.match(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/i);
-    if (titleMatch) {
+    if (titleMatch && titleMatch[1]) {
       // 移除 HTML 標籤並取得純文字
       return titleMatch[1].replace(/<[^>]*>/g, '').trim();
     }
@@ -133,6 +130,10 @@ export function useSlideThumbnails(
     }
 
     const slide = renderResult.slides[slideIndex];
+    if (!slide) {
+      return null;
+    }
+    
     const title = extractSlideTitle(slide.content, slideIndex);
     const thumbnailHtml = generateThumbnailHtml(
       slide.content,

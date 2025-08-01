@@ -10,7 +10,6 @@ import { SlideViewerProps, DEFAULT_SLIDE_DIMENSIONS } from '@/types/slidePreview
 export function SlideViewer({
   slideHtml,
   slideCss,
-  zoomLevel,
   slideSize = DEFAULT_SLIDE_DIMENSIONS,
   centered = true,
   className,
@@ -25,8 +24,6 @@ export function SlideViewer({
         .slide-viewer-content {
           width: ${slideSize.width}px;
           height: ${slideSize.height}px;
-          transform: scale(${zoomLevel});
-          transform-origin: center center;
           background-color: white;
           border-radius: 8px;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -135,12 +132,12 @@ export function SlideViewer({
         }
       </style>
     `;
-  }, [slideCss, slideSize, zoomLevel]);
+  }, [slideCss, slideSize]);
 
   // 計算容器樣式
   const containerStyle = useMemo(() => {
-    const scaledWidth = slideSize.width * zoomLevel;
-    const scaledHeight = slideSize.height * zoomLevel;
+    const scaledWidth = slideSize.width;
+    const scaledHeight = slideSize.height;
     
     return {
       width: scaledWidth,
@@ -148,7 +145,7 @@ export function SlideViewer({
       minWidth: scaledWidth,
       minHeight: scaledHeight,
     };
-  }, [slideSize, zoomLevel]);
+  }, [slideSize]);
 
   return (
     <div

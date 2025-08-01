@@ -31,10 +31,9 @@ vi.mock('./ThumbnailGrid', () => ({
 }));
 
 vi.mock('./SlideViewer', () => ({
-  SlideViewer: ({ slideHtml, zoomLevel }: any) => (
+  SlideViewer: ({ slideHtml }: any) => (
     <div data-testid="slide-viewer">
       <div>{slideHtml}</div>
-      <span>Zoom: {zoomLevel}</span>
     </div>
   ),
 }));
@@ -93,7 +92,6 @@ describe('SlidePreview', () => {
   const mockState = {
     currentSlide: 0,
     totalSlides: 2,
-    zoomLevel: 1,
     showThumbnails: true,
     isFullscreen: false,
     thumbnailPanelWidth: 200,

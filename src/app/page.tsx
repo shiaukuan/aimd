@@ -41,9 +41,9 @@ export default function Home() {
   return (
     <MainLayout>
       <SplitPanel
-        className="h-[calc(100vh-200px)]"
-        minLeftWidth={300}
-        minRightWidth={400}
+        className="h-[calc(100vh-120px)]"
+        minLeftWidth={400}
+        minRightWidth={500}
         storageKey="markdown-editor-split"
       >
         {/* Left Panel - Editor */}
@@ -71,7 +71,7 @@ export default function Home() {
         <div className="text-center text-sm text-muted-foreground">
           目前有 {slideCount} 張投影片
         </div>
-        
+
         {/* 操作按鈕 */}
         <div className="flex gap-4 justify-center">
           <button
