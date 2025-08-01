@@ -74,12 +74,9 @@ export const MarkdownEditor = React.forwardRef<
     setIsComposing(true);
   }, []);
 
-  const handleCompositionEnd = useCallback(
-    () => {
-      setIsComposing(false);
-    },
-    []
-  );
+  const handleCompositionEnd = useCallback(() => {
+    setIsComposing(false);
+  }, []);
 
   // 同步捲軸位置
   const syncScroll = useCallback(() => {
@@ -160,7 +157,6 @@ export const MarkdownEditor = React.forwardRef<
       </div>
     ));
   }, [value]);
-
 
   // 設置捲軸同步監聽器
   useEffect(() => {

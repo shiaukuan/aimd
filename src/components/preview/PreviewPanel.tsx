@@ -128,6 +128,20 @@ export default function PreviewPanel({
         onRenderComplete(slideData.slideCount);
       }
 
+      // 預設隱藏所有投影片，除了第一張
+      setTimeout(() => {
+        if (previewRef.current) {
+          const slides = previewRef.current.querySelectorAll('section');
+          slides.forEach((slide, index) => {
+            if (index === 0) {
+              (slide as HTMLElement).style.display = 'flex';
+            } else {
+              (slide as HTMLElement).style.display = 'none';
+            }
+          });
+        }
+      }, 0);
+
       return slideData;
     } catch (error) {
       const errorMsg =
@@ -173,34 +187,56 @@ export default function PreviewPanel({
   // 投影片導航函數
   const goToSlide = useCallback(
     (slideIndex: number) => {
-      if (!slideData) return;
+      if (!slideData || !previewRef.current) return;
 
       const newIndex = Math.max(
         0,
         Math.min(slideIndex, slideData.slideCount - 1)
       );
-      setCurrentSlide(newIndex);
 
-      // 滾動到對應投影片
-      const slideElement = previewRef.current?.querySelector(
-        `section:nth-child(${newIndex + 1})`
-      );
-      if (slideElement) {
-        slideElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      console.log(`Navigating to slide: ${newIndex + 1}`);
+
+      // 直接操作 DOM 來顯示/隱藏投影片
+      const slides = previewRef.current.querySelectorAll('section');
+      slides.forEach((slide, index) => {
+        const slideElement = slide as HTMLElement;
+        if (index === newIndex) {
+          slideElement.style.display = 'flex';
+          // 確保滾動到可見區域
+          slideElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          slideElement.style.display = 'none';
+        }
+      });
+
+      setCurrentSlide(newIndex);
     },
     [slideData]
   );
 
-  const nextSlide = useCallback(
-    () => goToSlide(currentSlide + 1),
-    [goToSlide, currentSlide]
-  );
-  const prevSlide = useCallback(
-    () => goToSlide(currentSlide - 1),
-    [goToSlide, currentSlide]
-  );
-  const resetToFirstSlide = useCallback(() => goToSlide(0), [goToSlide]);
+  const nextSlide = useCallback(() => {
+    setCurrentSlide(prev => {
+      const newIndex = Math.min(
+        prev + 1,
+        slideData ? slideData.slideCount - 1 : 0
+      );
+      goToSlide(newIndex);
+      return newIndex;
+    });
+  }, [goToSlide, slideData]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide(prev => {
+      const newIndex = Math.max(prev - 1, 0);
+      goToSlide(newIndex);
+      return newIndex;
+    });
+  }, [goToSlide]);
+
+  const resetToFirstSlide = useCallback(() => {
+    setCurrentSlide(0);
+    goToSlide(0);
+  }, [goToSlide]);
 
   // 全螢幕切換
   const toggleFullscreen = useCallback(async () => {
@@ -233,6 +269,16 @@ export default function PreviewPanel({
   // 鍵盤快捷鍵
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // 如果焦點在輸入框或文字區域，則不觸發快捷鍵
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+
       if (!slideData || slideData.slideCount <= 1) return;
 
       switch (e.key) {
@@ -266,7 +312,6 @@ export default function PreviewPanel({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [
     slideData,
-    currentSlide,
     prevSlide,
     nextSlide,
     resetToFirstSlide,
@@ -296,10 +341,6 @@ export default function PreviewPanel({
           margin-bottom: 1rem;
         }
         
-        section:not(:nth-child(${currentSlide + 1})) {
-          display: none;
-        }
-        
         .marp-container {
           width: 100%;
           height: 100%;
@@ -307,7 +348,7 @@ export default function PreviewPanel({
         }
       </style>
     `;
-  }, [slideData?.css, currentSlide]);
+  }, [slideData?.css]);
 
   // 渲染錯誤狀態
   if (renderError) {
