@@ -129,7 +129,6 @@ export function EditorToolbar({
   showFileOperations = true,
   showFormatting = true,
   showInsertOptions = true,
-  showViewOptions = true,
   onAction,
   activeFormats = [],
 }: EditorToolbarProps) {
