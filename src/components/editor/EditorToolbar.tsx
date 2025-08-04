@@ -23,6 +23,14 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         shortcut: 'Ctrl+N',
       },
       {
+        id: 'newTab',
+        label: '新分頁',
+        icon: '📑',
+        tooltip: '新分頁 (Ctrl+T)',
+        action: 'newTab',
+        shortcut: 'Ctrl+T',
+      },
+      {
         id: 'save',
         label: '儲存',
         icon: '💾',
@@ -144,8 +152,6 @@ export function EditorToolbar({
         return showFormatting;
       case 'insert':
         return showInsertOptions;
-      case 'view':
-        return showViewOptions;
       default:
         return true;
     }

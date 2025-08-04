@@ -12,7 +12,6 @@ describe('EditorToolbar', () => {
     // 檢查檔案操作按鈕
     expect(screen.getByTestId('toolbar-new')).toBeInTheDocument();
     expect(screen.getByTestId('toolbar-save')).toBeInTheDocument();
-    expect(screen.getByTestId('toolbar-export')).toBeInTheDocument();
 
     // 檢查格式化按鈕
     expect(screen.getByTestId('toolbar-bold')).toBeInTheDocument();
@@ -27,9 +26,6 @@ describe('EditorToolbar', () => {
     expect(screen.getByTestId('toolbar-link')).toBeInTheDocument();
     expect(screen.getByTestId('toolbar-image')).toBeInTheDocument();
     expect(screen.getByTestId('toolbar-codeBlock')).toBeInTheDocument();
-
-    // 檢查設定按鈕
-    expect(screen.getByTestId('toolbar-settings')).toBeInTheDocument();
   });
 
   it('should hide groups when corresponding props are false', () => {

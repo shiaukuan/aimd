@@ -45,6 +45,7 @@ export interface ToolbarGroup {
 // 編輯器動作類型
 export type EditorAction =
   | 'new'
+  | 'newTab'
   | 'open'
   | 'save'
   | 'undo'

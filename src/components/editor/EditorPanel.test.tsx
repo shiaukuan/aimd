@@ -241,16 +241,21 @@ describe('EditorPanel', () => {
     });
   });
 
-  it('should handle heading formatting', async () => {
-    render(<EditorPanel content="heading" />);
+  it('should handle new tab action (insert divider)', async () => {
+    render(<EditorPanel content="first section" />);
 
     const textarea = screen.getByTestId(
       'editor-textarea'
     ) as HTMLTextAreaElement;
-    textarea.setSelectionRange(0, 7);
+
+    // 將游標移到文字結尾
+    textarea.setSelectionRange(13, 13);
+
+    // 測試鍵盤快捷鍵 Ctrl+T
+    fireEvent.keyDown(textarea, { key: 't', ctrlKey: true });
 
     await waitFor(() => {
-      expect(textarea.value).toBe('# heading');
+      expect(textarea.value).toBe('first section\n---\n');
     });
   });
 

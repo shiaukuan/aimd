@@ -286,6 +286,26 @@ export function EditorPanel({
           }
           break;
 
+        case 'newTab':
+          // 插入分隔線來表示新分頁
+          const dividerText = '---';
+          const needsNewLine =
+            selectionStart > 0 && localContent[selectionStart - 1] !== '\n';
+          const prefix = needsNewLine ? '\n' : '';
+          // 分隔線後面總是加上換行符
+          const suffix = '\n';
+
+          newContent =
+            localContent.slice(0, selectionStart) +
+            prefix +
+            dividerText +
+            suffix +
+            localContent.slice(selectionEnd);
+          newSelectionStart =
+            selectionStart + prefix.length + dividerText.length + suffix.length;
+          newSelectionEnd = newSelectionStart;
+          break;
+
         default:
           // 其他動作交給回調函數處理
           callbacks?.onAction?.(action, data);
@@ -325,6 +345,10 @@ export function EditorPanel({
           case 's':
             e.preventDefault();
             handleToolbarAction('save');
+            break;
+          case 't':
+            e.preventDefault();
+            handleToolbarAction('newTab');
             break;
           case 'k':
             e.preventDefault();
