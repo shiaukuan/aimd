@@ -47,16 +47,12 @@ export type EditorAction =
   | 'new'
   | 'open'
   | 'save'
-  | 'export'
   | 'undo'
   | 'redo'
   | 'bold'
   | 'italic'
   | 'strikethrough'
   | 'code'
-  | 'heading1'
-  | 'heading2'
-  | 'heading3'
   | 'bulletList'
   | 'numberedList'
   | 'blockquote'
@@ -65,8 +61,7 @@ export type EditorAction =
   | 'image'
   | 'table'
   | 'horizontalRule'
-  | 'theme'
-  | 'settings';
+  | 'theme';
 
 // 編輯器回調函數型別
 export interface EditorCallbacks {

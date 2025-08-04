@@ -63,36 +63,6 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
     ],
   },
   {
-    id: 'headings',
-    label: '標題',
-    items: [
-      {
-        id: 'heading1',
-        label: 'H1',
-        icon: 'H₁',
-        tooltip: '一級標題 (Ctrl+1)',
-        action: 'heading1',
-        shortcut: 'Ctrl+1',
-      },
-      {
-        id: 'heading2',
-        label: 'H2',
-        icon: 'H₂',
-        tooltip: '二級標題 (Ctrl+2)',
-        action: 'heading2',
-        shortcut: 'Ctrl+2',
-      },
-      {
-        id: 'heading3',
-        label: 'H3',
-        icon: 'H₃',
-        tooltip: '三級標題 (Ctrl+3)',
-        action: 'heading3',
-        shortcut: 'Ctrl+3',
-      },
-    ],
-  },
-  {
     id: 'lists',
     label: '清單',
     items: [
@@ -222,27 +192,6 @@ export function EditorToolbar({
           )}
         </React.Fragment>
       ))}
-
-      {/* 右側額外選項 */}
-      {showViewOptions && (
-        <>
-          <div className="w-px h-6 bg-border mx-1" />
-          <div className="flex items-center gap-1 ml-auto">
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={disabled}
-              onClick={() => handleAction('settings')}
-              title="編輯器設定"
-              className="h-8 px-2 text-xs"
-              data-testid="toolbar-settings"
-            >
-              <span className="text-sm">⚙️</span>
-              <span className="hidden sm:inline ml-1">設定</span>
-            </Button>
-          </div>
-        </>
-      )}
     </div>
   );
 }

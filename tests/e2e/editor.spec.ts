@@ -23,17 +23,11 @@ test.describe('編輯器功能', () => {
     // 檔案操作按鈕
     await expect(page.getByTestId('toolbar-new')).toBeVisible();
     await expect(page.getByTestId('toolbar-save')).toBeVisible();
-    await expect(page.getByTestId('toolbar-export')).toBeVisible();
 
     // 格式化按鈕
     await expect(page.getByTestId('toolbar-bold')).toBeVisible();
     await expect(page.getByTestId('toolbar-italic')).toBeVisible();
     await expect(page.getByTestId('toolbar-code')).toBeVisible();
-
-    // 標題按鈕
-    await expect(page.getByTestId('toolbar-heading1')).toBeVisible();
-    await expect(page.getByTestId('toolbar-heading2')).toBeVisible();
-    await expect(page.getByTestId('toolbar-heading3')).toBeVisible();
 
     // 清單按鈕
     await expect(page.getByTestId('toolbar-bulletList')).toBeVisible();
@@ -43,9 +37,6 @@ test.describe('編輯器功能', () => {
     await expect(page.getByTestId('toolbar-link')).toBeVisible();
     await expect(page.getByTestId('toolbar-image')).toBeVisible();
     await expect(page.getByTestId('toolbar-codeBlock')).toBeVisible();
-
-    // 設定按鈕
-    await expect(page.getByTestId('toolbar-settings')).toBeVisible();
   });
 
   test('應該顯示預設內容', async ({ page }) => {
@@ -112,9 +103,6 @@ test.describe('編輯器功能', () => {
 
     await textarea.fill('heading');
     await textarea.selectText();
-
-    // 點擊 H1 按鈕
-    await page.getByTestId('toolbar-heading1').click();
 
     const content = await textarea.inputValue();
     expect(content).toBe('# heading');

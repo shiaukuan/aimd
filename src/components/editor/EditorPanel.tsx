@@ -215,22 +215,6 @@ export function EditorPanel({
           newSelectionEnd = newSelectionStart + codeText.length;
           break;
 
-        case 'heading1':
-        case 'heading2':
-        case 'heading3':
-          const level =
-            action === 'heading1' ? 1 : action === 'heading2' ? 2 : 3;
-          const headingText = selectedText || `標題 ${level}`;
-          const headingPrefix = '#'.repeat(level) + ' ';
-          newContent =
-            localContent.slice(0, selectionStart) +
-            headingPrefix +
-            headingText +
-            localContent.slice(selectionEnd);
-          newSelectionStart = selectionStart + headingPrefix.length;
-          newSelectionEnd = newSelectionStart + headingText.length;
-          break;
-
         case 'bulletList':
           const bulletText = selectedText || '清單項目';
           newContent =
@@ -292,10 +276,6 @@ export function EditorPanel({
           if (saveSuccess) {
             callbacks?.onSave?.(currentContent);
           }
-          break;
-
-        case 'export':
-          callbacks?.onExport?.(localContent, 'pptx');
           break;
 
         case 'new':
