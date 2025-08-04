@@ -14,7 +14,19 @@ const DEFAULT_CONTENT = `# 歡迎使用 Markdown 投影片產生器
 
 - **即時預覽** - 邊寫邊看效果
 - **簡單易用** - 使用熟悉的 Markdown 語法
-- **專業輸出** - 生成高品質的投影片`;
+- **專業輸出** - 生成高品質的投影片
+
+---
+
+## 使用說明
+
+1. 在左側編輯器中輸入 Markdown 內容
+2. 在右側預覽區域中即時預覽效果
+3. 使用工具列進行格式調整
+4. 在Markdown編輯區 按下 Ctrl+S 儲存文件在客戶端瀏覽器
+
+
+`;
 
 export default function Home() {
   const [slideCount, setSlideCount] = useState(1);

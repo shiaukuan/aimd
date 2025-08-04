@@ -17,6 +17,7 @@ import {
   Maximize2,
   RotateCcw,
   AlertTriangle,
+  Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ErrorBoundaryWrapper } from '@/components/ui/ErrorBoundary';
@@ -237,6 +238,60 @@ export default function PreviewPanel({
     setCurrentSlide(0);
     goToSlide(0);
   }, [goToSlide]);
+
+  // PDF下載功能
+  const downloadPDF = useCallback(() => {
+    if (!slideData) return;
+
+    // 使用瀏覽器列印功能生成PDF
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('無法開啟列印視窗，請檢查瀏覽器彈出視窗設定');
+      return;
+    }
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>投影片PDF</title>
+          <style>
+            ${slideData.css}
+            @media print {
+              body { margin: 0; padding: 0; }
+              .page-break { page-break-before: always; }
+              section {
+                width: 100vw !important;
+                height: 100vh !important;
+                display: flex !important;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 2rem;
+                box-sizing: border-box;
+                background: white;
+                margin: 0;
+                page-break-after: always;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${slideData.html}
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    
+    // 等待內容載入後自動開啟列印對話框
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  }, [slideData]);
 
   // 全螢幕切換
   const toggleFullscreen = useCallback(async () => {
@@ -486,6 +541,16 @@ export default function PreviewPanel({
           </div>
 
           <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={downloadPDF}
+              disabled={!slideData}
+              title="下載PDF"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+
             <Button
               variant="ghost"
               size="sm"

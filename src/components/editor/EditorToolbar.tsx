@@ -20,7 +20,7 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: '📄',
         tooltip: '新增文件 (Ctrl+N)',
         action: 'new',
-        shortcut: 'Ctrl+N'
+        shortcut: 'Ctrl+N',
       },
       {
         id: 'save',
@@ -28,16 +28,9 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: '💾',
         tooltip: '儲存文件 (Ctrl+S)',
         action: 'save',
-        shortcut: 'Ctrl+S'
+        shortcut: 'Ctrl+S',
       },
-      {
-        id: 'export',
-        label: '匯出',
-        icon: '📤',
-        tooltip: '匯出投影片',
-        action: 'export'
-      }
-    ]
+    ],
   },
   {
     id: 'format',
@@ -49,7 +42,7 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: '𝐁',
         tooltip: '粗體 (Ctrl+B)',
         action: 'bold',
-        shortcut: 'Ctrl+B'
+        shortcut: 'Ctrl+B',
       },
       {
         id: 'italic',
@@ -57,17 +50,17 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: '𝐼',
         tooltip: '斜體 (Ctrl+I)',
         action: 'italic',
-        shortcut: 'Ctrl+I'
+        shortcut: 'Ctrl+I',
       },
       {
         id: 'code',
         label: '程式碼',
-        icon: '</>', 
+        icon: '</>',
         tooltip: '內聯程式碼 (Ctrl+`)',
         action: 'code',
-        shortcut: 'Ctrl+`'
-      }
-    ]
+        shortcut: 'Ctrl+`',
+      },
+    ],
   },
   {
     id: 'headings',
@@ -79,7 +72,7 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: 'H₁',
         tooltip: '一級標題 (Ctrl+1)',
         action: 'heading1',
-        shortcut: 'Ctrl+1'
+        shortcut: 'Ctrl+1',
       },
       {
         id: 'heading2',
@@ -87,7 +80,7 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: 'H₂',
         tooltip: '二級標題 (Ctrl+2)',
         action: 'heading2',
-        shortcut: 'Ctrl+2'
+        shortcut: 'Ctrl+2',
       },
       {
         id: 'heading3',
@@ -95,9 +88,9 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: 'H₃',
         tooltip: '三級標題 (Ctrl+3)',
         action: 'heading3',
-        shortcut: 'Ctrl+3'
-      }
-    ]
+        shortcut: 'Ctrl+3',
+      },
+    ],
   },
   {
     id: 'lists',
@@ -109,7 +102,7 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: '•',
         tooltip: '無序清單 (Ctrl+Shift+8)',
         action: 'bulletList',
-        shortcut: 'Ctrl+Shift+8'
+        shortcut: 'Ctrl+Shift+8',
       },
       {
         id: 'numberedList',
@@ -117,9 +110,9 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: '1.',
         tooltip: '有序清單 (Ctrl+Shift+7)',
         action: 'numberedList',
-        shortcut: 'Ctrl+Shift+7'
-      }
-    ]
+        shortcut: 'Ctrl+Shift+7',
+      },
+    ],
   },
   {
     id: 'insert',
@@ -131,14 +124,14 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: '🔗',
         tooltip: '插入連結 (Ctrl+K)',
         action: 'link',
-        shortcut: 'Ctrl+K'
+        shortcut: 'Ctrl+K',
       },
       {
         id: 'image',
         label: '圖片',
         icon: '🖼️',
         tooltip: '插入圖片',
-        action: 'image'
+        action: 'image',
       },
       {
         id: 'codeBlock',
@@ -146,10 +139,10 @@ const TOOLBAR_GROUPS: ToolbarGroup[] = [
         icon: '{ }',
         tooltip: '程式碼區塊 (Ctrl+Shift+`)',
         action: 'codeBlock',
-        shortcut: 'Ctrl+Shift+`'
-      }
-    ]
-  }
+        shortcut: 'Ctrl+Shift+`',
+      },
+    ],
+  },
 ];
 
 export function EditorToolbar({
@@ -160,9 +153,8 @@ export function EditorToolbar({
   showInsertOptions = true,
   showViewOptions = true,
   onAction,
-  activeFormats = []
+  activeFormats = [],
 }: EditorToolbarProps) {
-  
   const handleAction = (action: EditorAction) => {
     if (disabled) return;
     onAction?.(action);
@@ -187,12 +179,12 @@ export function EditorToolbar({
     }
   };
 
-  const filteredGroups = TOOLBAR_GROUPS.filter(group => 
+  const filteredGroups = TOOLBAR_GROUPS.filter(group =>
     shouldShowGroup(group.id)
   );
 
   return (
-    <div 
+    <div
       className={cn(
         'flex items-center gap-1 p-2 border-b bg-background',
         'overflow-x-auto scrollbar-thin scrollbar-thumb-border',
@@ -203,10 +195,10 @@ export function EditorToolbar({
       {filteredGroups.map((group, groupIndex) => (
         <React.Fragment key={group.id}>
           <div className="flex items-center gap-1">
-            {group.items.map((item) => (
+            {group.items.map(item => (
               <Button
                 key={item.id}
-                variant={isActive(item.action) ? "default" : "ghost"}
+                variant={isActive(item.action) ? 'default' : 'ghost'}
                 size="sm"
                 disabled={disabled || item.disabled}
                 onClick={() => handleAction(item.action)}
@@ -223,7 +215,7 @@ export function EditorToolbar({
               </Button>
             ))}
           </div>
-          
+
           {/* 組與組之間的分隔線 */}
           {groupIndex < filteredGroups.length - 1 && (
             <div className="w-px h-6 bg-border mx-1" />
