@@ -193,3 +193,9 @@ export interface EditorContext {
     redo: () => void;
   };
 }
+
+// Marp 渲染結果
+export interface RenderResult {
+  slides: { id: string; content: string }[];
+  css: string;
+}
