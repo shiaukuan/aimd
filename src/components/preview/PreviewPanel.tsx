@@ -239,6 +239,7 @@ export default function PreviewPanel({
     goToSlide(0);
   }, [goToSlide]);
 
+
   // PDF下載功能
   const downloadPDF = useCallback(() => {
     if (!slideData) return;

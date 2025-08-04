@@ -144,6 +144,8 @@ export function EditorToolbar({
         return showFormatting;
       case 'insert':
         return showInsertOptions;
+      case 'view':
+        return showViewOptions;
       default:
         return true;
     }

@@ -36,7 +36,9 @@
       "mcp__playwright__browser_click",
       "mcp__playwright__browser_press_key",
       "mcp__playwright__browser_type",
-      "mcp__playwright__browser_snapshot"
+      "mcp__playwright__browser_snapshot",
+      "Bash(pnpm remove:*)",
+      "Bash(pnpm start:*)"
     ],
     "deny": []
   },
