@@ -500,10 +500,12 @@ export default function PreviewPanel({
         className={`relative h-full flex flex-col ${className} ${isFullscreen ? 'bg-black' : ''}`}
         data-testid="preview"
       >
-        {/* 標題列 */}
-        <div className="flex items-center justify-between p-3 border-b bg-background">
-          <h2 className="text-lg font-semibold">預覽</h2>
-        </div>
+        {/* 標題列 - 全螢幕時隱藏 */}
+        {!isFullscreen && (
+          <div className="flex items-center justify-between p-3 border-b bg-background">
+            <h2 className="text-lg font-semibold">預覽</h2>
+          </div>
+        )}
 
         {/* 工具列 */}
         <div className="flex items-center justify-between p-2 border-b bg-background/80 backdrop-blur-sm">
