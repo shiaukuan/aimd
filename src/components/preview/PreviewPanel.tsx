@@ -239,7 +239,6 @@ export default function PreviewPanel({
     goToSlide(0);
   }, [goToSlide]);
 
-
   // PDF下載功能
   const downloadPDF = useCallback(() => {
     if (!slideData) return;
@@ -286,7 +285,7 @@ export default function PreviewPanel({
 
     printWindow.document.write(printContent);
     printWindow.document.close();
-    
+
     // 等待內容載入後自動開啟列印對話框
     setTimeout(() => {
       printWindow.print();
@@ -401,6 +400,41 @@ export default function PreviewPanel({
           width: 100%;
           height: 100%;
           overflow: auto;
+        }
+        
+        /* 修復清單樣式顯示問題 */
+        section ol {
+          list-style-type: decimal !important;
+          list-style-position: outside !important;
+          margin-left: 1em;
+          padding-left: 1em;
+        }
+        
+        section ul {
+          list-style-type: disc !important;
+          list-style-position: outside !important;
+          margin-left: 1em;
+          padding-left: 1em;
+        }
+        
+        section ol ol {
+          list-style-type: lower-roman !important;
+        }
+        
+        section ol ol ol {
+          list-style-type: lower-alpha !important;
+        }
+        
+        section ul ul {
+          list-style-type: circle !important;
+        }
+        
+        section ul ul ul {
+          list-style-type: square !important;
+        }
+        
+        section li {
+          margin-bottom: 0.5em;
         }
       </style>
     `;
