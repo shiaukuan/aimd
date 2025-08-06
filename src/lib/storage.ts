@@ -27,14 +27,4 @@ export function setStorageItem<T>(key: string, value: T): void {
   }
 }
 
-export function removeStorageItem(key: string): void {
-  if (typeof window === 'undefined') {
-    return;
-  }
 
-  try {
-    window.localStorage.removeItem(key);
-  } catch (error) {
-    console.warn(`Failed to remove localStorage key "${key}":`, error);
-  }
-}

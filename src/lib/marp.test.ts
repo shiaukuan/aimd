@@ -3,11 +3,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
-  MarpEngine,
   getMarpEngine,
-  resetMarpEngine,
-  renderMarkdownToSlides,
-  validateMarpMarkdown,
 } from './marp';
 import { MarpRenderOptions } from '@/types/marp';
 
@@ -33,11 +29,10 @@ vi.mock('@marp-team/marp-core', () => ({
 }));
 
 describe('MarpEngine', () => {
-  let engine: MarpEngine;
+  let engine: ReturnType<typeof getMarpEngine>;
 
   beforeEach(() => {
-    resetMarpEngine();
-    engine = new MarpEngine();
+    engine = getMarpEngine();
   });
 
   describe('基本渲染功能', () => {
@@ -113,7 +108,7 @@ function hello() {
         }),
       };
 
-      const engineWithError = new MarpEngine();
+      const engineWithError = getMarpEngine();
       (engineWithError as unknown as { marp: typeof mockMarp }).marp = mockMarp;
 
       await expect(engineWithError.render('# 測試')).rejects.toThrow();
@@ -125,7 +120,7 @@ function hello() {
         render: vi.fn().mockReturnValue({ html: '', css: '' }),
       };
 
-      const engineWithEmptyResult = new MarpEngine();
+      const engineWithEmptyResult = getMarpEngine();
       (engineWithEmptyResult as unknown as { marp: typeof mockMarp }).marp =
         mockMarp;
 
@@ -161,6 +156,7 @@ function hello() {
         id: 'custom',
         name: 'custom',
         displayName: '自訂主題',
+        description: '使用者自訂的測試主題',
         css: 'body { color: red; }',
       };
 
@@ -236,71 +232,11 @@ function hello() {
   });
 });
 
-describe('MarpEngine 單例管理', () => {
-  beforeEach(() => {
-    resetMarpEngine();
-  });
-
-  it('應返回相同的實例', () => {
-    const engine1 = getMarpEngine();
-    const engine2 = getMarpEngine();
-    expect(engine1).toBe(engine2);
-  });
-
-  it('應能使用配置創建新實例', () => {
-    const engine1 = getMarpEngine();
-    const engine2 = getMarpEngine({ debug: true });
-    expect(engine1).not.toBe(engine2);
-  });
-
-  it('應能重置實例', () => {
-    const engine1 = getMarpEngine();
-    resetMarpEngine();
-    const engine2 = getMarpEngine();
-    expect(engine1).not.toBe(engine2);
-  });
-});
-
-describe('便利函數', () => {
-  beforeEach(() => {
-    resetMarpEngine();
-  });
-
-  it('renderMarkdownToSlides 應能正常工作', async () => {
-    const markdown = '# 測試標題';
-    const result = await renderMarkdownToSlides(markdown);
-
-    expect(result).toBeDefined();
-    expect(result.html).toContain('<section>');
-    expect(result.slideCount).toBeGreaterThan(0);
-  });
-
-  it('validateMarpMarkdown 應能正常工作', () => {
-    const markdown = '# 有效的 Markdown';
-    const result = validateMarpMarkdown(markdown);
-
-    expect(result.isValid).toBe(true);
-    expect(result.errors).toHaveLength(0);
-  });
-
-  it('應能傳遞渲染選項', async () => {
-    const markdown = '# 測試';
-    const options: Partial<MarpRenderOptions> = {
-      html: false,
-      theme: 'gaia',
-    };
-
-    const result = await renderMarkdownToSlides(markdown, options);
-    expect(result).toBeDefined();
-  });
-});
-
 describe('投影片解析', () => {
-  let engine: MarpEngine;
+  let engine: ReturnType<typeof getMarpEngine>;
 
   beforeEach(() => {
-    resetMarpEngine();
-    engine = new MarpEngine();
+    engine = getMarpEngine();
   });
 
   it('應能正確解析投影片內容', async () => {

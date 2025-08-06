@@ -3,7 +3,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useDebounce, useDebounceValue } from './useDebounce';
+import { useDebounce } from './useDebounce';
 
 // Mock timers
 beforeEach(() => {
@@ -239,92 +239,3 @@ describe('useDebounce', () => {
   });
 });
 
-describe('useDebounceValue', () => {
-  it('應該延遲更新值', () => {
-    const { result, rerender } = renderHook(
-      ({ value }) => useDebounceValue(value, 300),
-      { initialProps: { value: 'initial' } }
-    );
-
-    // 初始值應該立即返回
-    expect(result.current).toBe('initial');
-
-    // 更新值
-    rerender({ value: 'updated' });
-
-    // 值不應該立即更新
-    expect(result.current).toBe('initial');
-
-    // 快進時間
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
-
-    // 現在值應該更新
-    expect(result.current).toBe('updated');
-  });
-
-  it('應該取消之前的更新', () => {
-    const { result, rerender } = renderHook(
-      ({ value }) => useDebounceValue(value, 300),
-      { initialProps: { value: 'initial' } }
-    );
-
-    // 第一次更新
-    rerender({ value: 'first' });
-
-    // 150ms 後第二次更新
-    act(() => {
-      vi.advanceTimersByTime(150);
-    });
-    rerender({ value: 'second' });
-
-    // 再等 300ms
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
-
-    // 應該是最後一次更新的值
-    expect(result.current).toBe('second');
-  });
-
-  it('相同值不應該觸發更新', () => {
-    const { result, rerender } = renderHook(
-      ({ value }) => useDebounceValue(value, 300),
-      { initialProps: { value: 'test' } }
-    );
-
-    expect(result.current).toBe('test');
-
-    // 設置相同的值
-    rerender({ value: 'test' });
-
-    // 快進時間
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
-
-    // 值仍然相同
-    expect(result.current).toBe('test');
-  });
-
-  it('組件卸載時應該清理計時器', () => {
-    const { rerender, unmount } = renderHook(
-      ({ value }) => useDebounceValue(value, 300),
-      { initialProps: { value: 'initial' } }
-    );
-
-    rerender({ value: 'updated' });
-
-    // 卸載組件
-    unmount();
-
-    // 快進時間，不應該有任何副作用
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
-
-    // 測試通過表示沒有發生錯誤
-    expect(true).toBe(true);
-  });
-});

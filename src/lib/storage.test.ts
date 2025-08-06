@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { getStorageItem, setStorageItem, removeStorageItem } from './storage';
+import { getStorageItem, setStorageItem } from './storage';
 
 // Mock localStorage
 const localStorageMock = {
@@ -86,30 +86,4 @@ describe('storage utilities', () => {
     });
   });
 
-  describe('removeStorageItem', () => {
-    it('should remove item from localStorage', () => {
-      removeStorageItem('test-key');
-      
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('test-key');
-    });
-
-    it('should handle localStorage errors gracefully', () => {
-      localStorageMock.removeItem.mockImplementation(() => {
-        throw new Error('Access denied');
-      });
-      
-      expect(() => removeStorageItem('test-key')).not.toThrow();
-    });
-
-    it('should do nothing in SSR environment', () => {
-      vi.stubGlobal('window', undefined);
-      
-      removeStorageItem('test-key');
-      
-      expect(localStorageMock.removeItem).not.toHaveBeenCalled();
-      
-      // Restore window  
-      vi.stubGlobal('window', { localStorage: localStorageMock });
-    });
-  });
 });

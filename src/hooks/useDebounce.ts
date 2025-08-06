@@ -1,7 +1,7 @@
 // ABOUTME: 防抖動 hook，用於延遲觸發函數，避免過度頻繁的更新
 // ABOUTME: 支援自訂延遲時間和依賴項，主要用於編輯器內容同步
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 export interface UseDebounceOptions {
   delay?: number;
@@ -98,44 +98,4 @@ export function useDebounce<T extends (...args: any[]) => any>(
   };
 }
 
-/**
- * useDebounceValue hook
- * 用於防抖動數值變化
- *
- * @param value - 要防抖的值
- * @param delay - 延遲時間（毫秒）
- * @returns 防抖後的值
- */
-export function useDebounceValue<T>(value: T, delay: number = 300): T {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const valueRef = useRef(value);
-  const [debouncedValue, setDebouncedValue] = useState(value);
 
-  useEffect(() => {
-    // 如果值沒有變化，直接返回
-    if (valueRef.current === value) {
-      return;
-    }
-
-    valueRef.current = value;
-
-    // 清除之前的計時器
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    // 設置新的計時器
-    timeoutRef.current = setTimeout(() => {
-      setDebouncedValue(value);
-      timeoutRef.current = null;
-    }, delay);
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}

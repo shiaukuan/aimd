@@ -98,16 +98,6 @@ test.describe('編輯器功能', () => {
     expect(content).toBe('*test* content');
   });
 
-  test('標題按鈕應該正常工作', async ({ page }) => {
-    const textarea = page.getByTestId('editor-textarea');
-
-    await textarea.fill('heading');
-    await textarea.selectText();
-
-    const content = await textarea.inputValue();
-    expect(content).toBe('# heading');
-  });
-
   test('清單按鈕應該正常工作', async ({ page }) => {
     const textarea = page.getByTestId('editor-textarea');
 

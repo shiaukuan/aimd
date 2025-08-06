@@ -46,7 +46,7 @@ interface SlideData {
   comments: string[];
 }
 
-export default function PreviewPanel({
+export function PreviewPanel({
   className = '',
   enableSync = true,
   syncDelay = 300,

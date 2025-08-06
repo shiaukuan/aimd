@@ -451,26 +451,5 @@ export function getMarpEngine(config?: Partial<MarpEngineConfig>): MarpEngine {
   return marpEngineInstance;
 }
 
-/**
- * 重置 Marp 引擎實例
- */
-export function resetMarpEngine(): void {
-  marpEngineInstance = null;
-}
 
-// 導出類別以供測試使用
-export { MarpEngine };
 
-// 導出便利函數
-export async function renderMarkdownToSlides(
-  markdown: string,
-  options?: Partial<MarpRenderOptions>
-): Promise<MarpRenderResult> {
-  const engine = getMarpEngine();
-  return engine.render(markdown, options);
-}
-
-export function validateMarpMarkdown(markdown: string) {
-  const engine = getMarpEngine();
-  return engine.validateMarkdown(markdown);
-}

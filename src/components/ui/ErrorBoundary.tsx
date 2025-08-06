@@ -337,4 +337,3 @@ export function ErrorBoundaryWrapper({
   );
 }
 
-export default ErrorBoundary;

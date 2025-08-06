@@ -3,7 +3,7 @@
 import { MainLayout } from '@/components/layout/MainLayout';
 import { SplitPanel } from '@/components/ui/SplitPanel';
 import { EditorPanel } from '@/components/editor/EditorPanel';
-import PreviewPanel from '@/components/preview/PreviewPanel';
+import { PreviewPanel } from '@/components/preview/PreviewPanel';
 import { useState } from 'react';
 
 const DEFAULT_CONTENT = `# 歡迎使用 Markdown 投影片產生器

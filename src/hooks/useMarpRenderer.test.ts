@@ -3,7 +3,7 @@
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useMarpRenderer, useSimpleMarpRenderer } from './useMarpRenderer';
+import { useMarpRenderer } from './useMarpRenderer';
 
 // Mock Marp 引擎
 vi.mock('@/lib/marp', () => ({
@@ -225,91 +225,3 @@ describe('useMarpRenderer', () => {
   });
 });
 
-describe('useSimpleMarpRenderer', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('應提供簡化的介面', () => {
-    const { result } = renderHook(() => useSimpleMarpRenderer());
-
-    expect(typeof result.current.renderMarkdown).toBe('function');
-    expect(typeof result.current.clearError).toBe('function');
-    expect(result.current.isLoading).toBe(false);
-    expect(result.current.error).toBeNull();
-  });
-
-  it('應能成功渲染', async () => {
-    const { result } = renderHook(() => useSimpleMarpRenderer());
-
-    let renderResult: unknown;
-    await act(async () => {
-      renderResult = await result.current.renderMarkdown('# 測試');
-    });
-
-    expect(renderResult).toBeDefined();
-    expect((renderResult as { html?: string })?.html).toContain('<section>');
-    expect(result.current.isLoading).toBe(false);
-    expect(result.current.error).toBeNull();
-  });
-
-  it('應處理空 Markdown', async () => {
-    const { result } = renderHook(() => useSimpleMarpRenderer());
-
-    let renderResult;
-    await act(async () => {
-      renderResult = await result.current.renderMarkdown('');
-    });
-
-    expect(renderResult).toBeNull();
-    expect(result.current.isLoading).toBe(false);
-  });
-
-  it('應處理渲染錯誤', async () => {
-    const { result } = renderHook(() => useSimpleMarpRenderer());
-    const mockEngine = {
-      render: vi.fn().mockRejectedValue(new Error('渲染失敗')),
-    };
-
-    const { getMarpEngine } = await import('@/lib/marp');
-    vi.mocked(getMarpEngine).mockReturnValue(
-      mockEngine as unknown as ReturnType<typeof getMarpEngine>
-    );
-
-    let renderResult;
-    await act(async () => {
-      renderResult = await result.current.renderMarkdown('# 測試');
-    });
-
-    expect(renderResult).toBeNull();
-    expect(result.current.error).toBe('渲染失敗');
-    expect(result.current.isLoading).toBe(false);
-  });
-
-  it('應能清除錯誤', async () => {
-    const { result } = renderHook(() => useSimpleMarpRenderer());
-
-    // 先產生錯誤
-    const mockEngine = {
-      render: vi.fn().mockRejectedValue(new Error('測試錯誤')),
-    };
-
-    const { getMarpEngine } = await import('@/lib/marp');
-    vi.mocked(getMarpEngine).mockReturnValue(
-      mockEngine as unknown as ReturnType<typeof getMarpEngine>
-    );
-
-    await act(async () => {
-      await result.current.renderMarkdown('# 測試');
-    });
-
-    expect(result.current.error).toBe('測試錯誤');
-
-    // 清除錯誤
-    act(() => {
-      result.current.clearError();
-    });
-
-    expect(result.current.error).toBeNull();
-  });
-});

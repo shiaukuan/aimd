@@ -203,5 +203,3 @@ export function EditorToolbar({
   );
 }
 
-// 匯出工具列按鈕配置供其他組件使用
-export { TOOLBAR_GROUPS };
