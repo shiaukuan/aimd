@@ -115,3 +115,42 @@ export interface EditorStatusBarProps {
   };
 }
 
+// AI 生成相關類型
+export interface AiGenerationSettings {
+  baseUrl: string;
+  apiKey: string;
+  model: string;
+  prompt: string;
+}
+
+export interface AiGenerationRequest {
+  baseUrl: string;
+  apiKey: string;
+  model: string;
+  prompt: string;
+}
+
+export interface AiGenerationResponse {
+  content: string;
+  model: string;
+  usage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+}
+
+export interface AiGenerationError {
+  message: string;
+  code?: string;
+  status?: number;
+}
+
+// AI 生成面板屬性
+export interface AiGenerationPanelProps {
+  onGenerate: (content: string) => void;
+  isGenerating?: boolean;
+  className?: string;
+  onError?: (error: AiGenerationError) => void;
+}
+

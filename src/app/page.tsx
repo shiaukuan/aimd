@@ -4,7 +4,11 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { SplitPanel } from '@/components/ui/SplitPanel';
 import { EditorPanel } from '@/components/editor/EditorPanel';
 import { PreviewPanel } from '@/components/preview/PreviewPanel';
-import { useState } from 'react';
+import { AiGenerationPanel } from '@/components/editor/AiGenerationPanel';
+import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import { Wand2, X } from 'lucide-react';
+import { useEditorStore } from '@/store/editorStore';
 
 const DEFAULT_CONTENT = `# 歡迎使用 Markdown 投影片產生器
 
@@ -29,6 +33,18 @@ const DEFAULT_CONTENT = `# 歡迎使用 Markdown 投影片產生器
 
 export default function Home() {
   const [slideCount, setSlideCount] = useState(1);
+  const [showAiPanel, setShowAiPanel] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  
+  // 取得編輯器狀態管理
+  const { content, setContent } = useEditorStore();
+  
+  // 初始化默認內容
+  useEffect(() => {
+    if (!content.trim()) {
+      setContent(DEFAULT_CONTENT);
+    }
+  }, [content, setContent]);
 
   const handleSave = (content: string) => {
     console.log('儲存內容:', content);
@@ -49,17 +65,61 @@ export default function Home() {
     setSlideCount(count);
   };
 
+  // AI 生成處理函數
+  const handleAiGenerate = (content: string) => {
+    setContent(content);  // 更新 Zustand store
+    setShowAiPanel(false);  // 關閉 AI 面板
+    setIsGenerating(false);
+  };
+
+  const handleAiError = (error: { message: string; code?: string; status?: number }) => {
+    setIsGenerating(false);
+    console.error('AI 生成錯誤:', error);
+  };
+
   return (
     <MainLayout>
+      {/* AI 生成面板切換按鈕 */}
+      <div className="flex justify-end p-4">
+        <Button
+          onClick={() => setShowAiPanel(!showAiPanel)}
+          variant={showAiPanel ? "default" : "outline"}
+          className="gap-2"
+        >
+          {showAiPanel ? (
+            <>
+              <X className="h-4 w-4" />
+              關閉 AI 面板
+            </>
+          ) : (
+            <>
+              <Wand2 className="h-4 w-4" />
+              AI 生成投影片
+            </>
+          )}
+        </Button>
+      </div>
+
+      {/* AI 生成面板 */}
+      {showAiPanel && (
+        <div className="mb-6 px-4">
+          <AiGenerationPanel
+            onGenerate={handleAiGenerate}
+            isGenerating={isGenerating}
+            onError={handleAiError}
+            className="max-w-2xl mx-auto"
+          />
+        </div>
+      )}
+
       <SplitPanel
-        className="h-[calc(100vh-120px)]"
+        className="h-[calc(100vh-200px)]"
         minLeftWidth={400}
         minRightWidth={500}
         storageKey="markdown-editor-split"
       >
         {/* Left Panel - Editor */}
         <EditorPanel
-          content={DEFAULT_CONTENT}
           placeholder="在這裡輸入你的 Markdown 內容..."
           callbacks={{
             onSave: handleSave,
