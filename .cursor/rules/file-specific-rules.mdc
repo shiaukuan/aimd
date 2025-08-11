@@ -1,0 +1,411 @@
+---
+globs: *.ts,*.tsx,*.js,*.jsx,*.json,*.md
+description: 針對不同檔案類型的專門開發規範
+---
+
+# 檔案特定規範
+
+## TypeScript/JavaScript 檔案 (_.ts, _.tsx, _.js, _.jsx)
+
+### 📝 檔案頭部註解
+
+```typescript
+// ABOUTME: 此檔案負責投影片編輯器的主要容器功能
+// ABOUTME: 整合工具列、編輯區域和狀態列，管理統計計算和格式化操作
+```
+
+**強制要求**：每個檔案都必須以兩行 `// ABOUTME:` 開頭的註解
+
+### 🔧 匯入規範
+
+```typescript
+// 1. Node 模組
+import React from 'react';
+import { useState, useCallback } from 'react';
+
+// 2. 第三方函式庫
+import { create } from 'zustand';
+import { cn } from 'clsx';
+
+// 3. 內部模組 (使用 @ 別名)
+import { Button } from '@/components/ui/button';
+import { useEditorStore } from '@/store/editorStore';
+import type { EditorProps } from '@/types/editor';
+
+// 4. 相對路徑匯入
+import { EditorToolbar } from './EditorToolbar';
+import { EditorStatusBar } from './EditorStatusBar';
+```
+
+### 🏷️ 匯出規範
+
+```typescript
+// 具名匯出 (首選)
+export function EditorPanel() {
+  /* ... */
+}
+export { EditorPanel };
+
+// 型別匯出
+export type { EditorPanelProps };
+
+// 預設匯出 (僅當是主要元件時)
+export default EditorPanel;
+```
+
+### 🎯 型別註解
+
+```typescript
+// 明確的型別註解
+const handleChange = (content: string): void => {
+  // 實作
+};
+
+// 泛型使用
+function createStore<T>(initialState: T): Store<T> {
+  // 實作
+}
+
+// 避免 any，使用 unknown
+function parseData(data: unknown): ParsedData {
+  // 實作
+}
+```
+
+## React 元件檔案 (\*.tsx)
+
+### 🧩 元件結構順序
+
+```typescript
+// ABOUTME: 投影片預覽元件，顯示 Marp 渲染後的投影片內容
+// ABOUTME: 支援縮放、導航和全螢幕模式功能
+
+import React from 'react';
+// ... 其他匯入
+
+// 1. 型別定義
+interface SlidePreviewProps {
+  content: string;
+  className?: string;
+}
+
+// 2. 主要元件
+export function SlidePreview({
+  content,
+  className
+}: SlidePreviewProps) {
+  // 3. Hook 調用
+  const [isLoading, setIsLoading] = useState(false);
+  const { render } = useMarpRenderer();
+
+  // 4. 事件處理器
+  const handleContentChange = useCallback((newContent: string) => {
+    // 實作
+  }, []);
+
+  // 5. 副作用
+  useEffect(() => {
+    // 實作
+  }, [content]);
+
+  // 6. 渲染邏輯
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <div className={cn('slide-preview', className)}>
+      {/* JSX 內容 */}
+    </div>
+  );
+}
+
+// 7. 記憶化 (如果需要)
+export default React.memo(SlidePreview);
+```
+
+### 🎨 樣式處理
+
+```typescript
+// 使用 cn 函數合併類名
+className={cn(
+  'base-classes',
+  'conditional-classes',
+  variant === 'primary' && 'primary-styles',
+  disabled && 'disabled-styles',
+  className
+)}
+
+// 避免內聯樣式，使用 Tailwind
+<div className="flex items-center gap-2 p-4 bg-white dark:bg-gray-900">
+```
+
+## Hook 檔案 (\*.ts)
+
+### 🪝 Hook 命名規範
+
+```typescript
+// ABOUTME: 此 Hook 提供投影片導航和控制功能
+// ABOUTME: 包含縮放、全螢幕、鍵盤快捷鍵和導航狀態管理
+
+// Hook 名稱必須以 use 開頭
+export function useSlideControls() {
+  /* ... */
+}
+export function useMarpRenderer() {
+  /* ... */
+}
+export function useAutoSave() {
+  /* ... */
+}
+
+// 回傳型別明確定義
+interface UseSlideControlsReturn {
+  currentSlide: number;
+  totalSlides: number;
+  goToSlide: (index: number) => void;
+  nextSlide: () => void;
+  previousSlide: () => void;
+  toggleFullscreen: () => void;
+}
+```
+
+### ⚙️ Hook 參數設計
+
+```typescript
+// 使用選項物件傳遞參數
+interface UseAutoSaveOptions {
+  interval?: number;
+  key?: string;
+  immediate?: boolean;
+  validate?: (content: string) => boolean;
+}
+
+export function useAutoSave(content: string, options: UseAutoSaveOptions = {}) {
+  const {
+    interval = 30000,
+    key = 'auto-save',
+    immediate = false,
+    validate = () => true,
+  } = options;
+
+  // Hook 實作
+}
+```
+
+## 測試檔案 (_.test.ts, _.test.tsx, \*.spec.ts)
+
+### 🧪 測試檔案結構
+
+```typescript
+// ABOUTME: 此檔案測試 Button 元件的各種變體和互動行為
+// ABOUTME: 包含可存取性、點擊事件和樣式變體的測試案例
+
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Button } from './button';
+
+// 使用 describe 群組化測試
+describe('Button', () => {
+  // 基礎渲染測試
+  describe('渲染行為', () => {
+    it('should render with default props', () => {
+      render(<Button>Test</Button>);
+      expect(screen.getByRole('button')).toBeInTheDocument();
+    });
+
+    it('should apply custom className', () => {
+      render(<Button className="custom-class">Test</Button>);
+      expect(screen.getByRole('button')).toHaveClass('custom-class');
+    });
+  });
+
+  // 互動測試
+  describe('互動行為', () => {
+    it('should handle click events', () => {
+      const handleClick = vi.fn();
+      render(<Button onClick={handleClick}>Test</Button>);
+
+      fireEvent.click(screen.getByRole('button'));
+      expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // 可存取性測試
+  describe('可存取性', () => {
+    it('should have proper ARIA attributes', () => {
+      render(<Button disabled>Test</Button>);
+      expect(screen.getByRole('button')).toHaveAttribute('aria-disabled', 'true');
+    });
+  });
+});
+```
+
+### 🎯 測試命名規範
+
+```typescript
+// 描述性測試名稱
+it('should render markdown as HTML slides', () => {});
+it('should handle navigation between slides', () => {});
+it('should display error message when rendering fails', () => {});
+it('should save content to localStorage on change', () => {});
+
+// Hook 測試
+describe('useMarpRenderer', () => {
+  it('should return render result after successful rendering', () => {});
+  it('should handle rendering errors gracefully', () => {});
+  it('should debounce render calls', () => {});
+});
+```
+
+## 配置檔案 (_.json, _.config.ts)
+
+### ⚙️ package.json 結構
+
+```json
+{
+  "name": "markdown-slides",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "test": "vitest run --reporter=verbose",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "next": "15.4.5",
+    "react": "19.1.0"
+  }
+}
+```
+
+### 🔧 TypeScript 配置檔案
+
+```typescript
+// tsconfig.json, next.config.ts 等
+// 使用 satisfies 確保型別安全
+export default {
+  experimental: {
+    typedRoutes: true,
+  },
+} satisfies NextConfig;
+```
+
+## Markdown 檔案 (\*.md)
+
+### 📖 文件結構規範
+
+````markdown
+# 標題
+
+> 📋 **文件目的**：簡短描述文件的目的和讀者
+
+## 主要章節
+
+### 子章節
+
+- 使用清晰的層級結構
+- 提供程式碼範例
+- 包含相關檔案連結
+
+```typescript
+// 程式碼範例應該有語法高亮
+function example() {
+  return 'Hello World';
+}
+```
+````
+
+## 參考資料
+
+- [相關文件](./related-doc.md)
+- [API 參考](./api-reference.md)
+
+````
+
+### 📝 程式碼區塊規範
+```markdown
+<!-- 指定語言以啟用語法高亮 -->
+```typescript
+interface Example {
+  name: string;
+}
+````
+
+<!-- 包含檔案路徑作為註解 -->
+
+```typescript
+// src/components/Example.tsx
+export function Example() {
+  return <div>Example</div>;
+}
+```
+
+````
+
+## 樣式檔案 (*.css, globals.css)
+
+### 🎨 CSS 變數規範
+```css
+/* ABOUTME: 全域樣式定義，包含 CSS 變數和基礎樣式 */
+/* ABOUTME: 支援亮色和暗色主題的變數定義 */
+
+:root {
+  /* 主要顏色變數 */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+
+  /* 間距變數 */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+}
+````
+
+### 🏗️ 元件樣式
+
+```css
+/* 使用 BEM 命名法或 Tailwind 類名 */
+.slide-preview {
+  @apply flex flex-col h-full overflow-hidden;
+}
+
+.slide-preview__content {
+  @apply flex-1 overflow-auto;
+}
+
+.slide-preview--loading {
+  @apply opacity-50 pointer-events-none;
+}
+```
+
+## 環境檔案 (.env, .env.local)
+
+### 🔐 環境變數規範
+
+```bash
+# ABOUTME: 開發環境變數配置
+# ABOUTME: 包含 API 金鑰和服務端點設定
+
+# Next.js 公開變數 (NEXT_PUBLIC_ 前綴)
+NEXT_PUBLIC_APP_NAME=Markdown Slides
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+
+# 私有變數 (伺服器端使用)
+OPENAI_API_KEY=your-api-key-here
+DATABASE_URL=postgres://user:pass@localhost:5432/db
+
+# 功能開關
+NEXT_PUBLIC_ENABLE_ANALYTICS=false
+```
+
+參考重要檔案：
+
+- [專案架構文件](mdc:docs/project-architecture-for-ai.md)
+- [型別定義](mdc:src/types/index.ts)
+- [Vitest 配置](mdc:vitest.config.ts)
+- [Next.js 配置](mdc:next.config.ts)

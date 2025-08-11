@@ -1,0 +1,105 @@
+---
+alwaysApply: true
+description: Markdown 投影片編輯器專案架構和核心規範
+---
+
+# Markdown 投影片編輯器 - 專案架構規範
+
+## 技術棧核心
+
+此專案基於 **Next.js 15 + React 19 + TypeScript 5**，使用 **App Router** 架構。
+
+### 主要技術組合
+
+- **前端框架**: Next.js 15.4.5 (App Router)
+- **React**: 19.1.0 (最新版本)
+- **TypeScript**: 5 (嚴格模式)
+- **包管理器**: pnpm 9.0.0
+- **樣式**: Tailwind CSS v4
+- **UI 框架**: shadcn/ui + Radix UI
+- **狀態管理**: Zustand 5.0.7
+- **測試**: Vitest (單元) + Playwright (E2E)
+- **投影片引擎**: @marp-team/marp-core 4.1.0
+
+## 專案結構規範
+
+### 核心目錄結構
+
+```
+src/
+├── app/           # Next.js App Router (頁面和佈局)
+├── components/    # React 元件庫
+│   ├── editor/    # 編輯器相關元件
+│   ├── preview/   # 投影片預覽元件
+│   ├── layout/    # 佈局元件
+│   └── ui/        # 基礎 UI 元件 (shadcn/ui)
+├── hooks/         # 自定義 React Hooks
+├── lib/           # 核心邏輯和工具函式
+├── store/         # Zustand 狀態管理
+├── types/         # TypeScript 型別定義
+└── test/          # 測試配置和工具
+```
+
+### 重要檔案引用
+
+- 主要型別定義: [src/types/index.ts](mdc:src/types/index.ts)
+- 狀態管理: [src/store/editorStore.ts](mdc:src/store/editorStore.ts)
+- Marp 引擎: [src/lib/marp.ts](mdc:src/lib/marp.ts)
+- 驗證系統: [src/lib/validations.ts](mdc:src/lib/validations.ts)
+- 主要 Hook: [src/hooks/useMarpRenderer.ts](mdc:src/hooks/useMarpRenderer.ts)
+
+## 架構設計原則
+
+### 1. 關注點分離
+
+- **Components**: 純 UI 元件，專注於介面展示
+- **Hooks**: 業務邏輯和狀態管理
+- **Lib**: 核心工具和第三方整合
+- **Store**: 全域狀態管理
+
+### 2. 型別安全優先
+
+- 所有函式和元件都有完整的 TypeScript 型別定義
+- 使用 Zod 進行執行期驗證
+- 避免使用 `any` 型別
+
+### 3. 測試驅動開發
+
+- 採用 TDD 流程：先寫測試，再寫實作
+- 測試檔案與原始檔並列 (colocation)
+- 完整的測試覆蓋：單元測試 + 整合測試 + E2E 測試
+
+### 4. 效能優化
+
+- 使用 React.memo、useMemo、useCallback 進行最佳化
+- debounced 渲染避免過度更新
+- localStorage 快取和自動儲存
+
+## 核心模組說明
+
+### 編輯器系統 (`src/components/editor/`)
+
+主要元件：
+
+- `EditorPanel.tsx`: 主編輯器容器，整合工具列和狀態列
+- `MarkdownEditor.tsx`: 核心文字編輯器
+- `EditorToolbar.tsx`: 格式化工具列
+- `EditorStatusBar.tsx`: 狀態顯示列
+
+### 預覽系統 (`src/components/preview/`)
+
+主要元件：
+
+- `SlidePreview.tsx`: 完整預覽系統容器
+- `SlideViewer.tsx`: 單一投影片檢視器
+- `ThumbnailGrid.tsx`: 投影片縮圖網格
+- `SlideControlBar.tsx`: 導航控制列
+
+### Hook 系統 (`src/hooks/`)
+
+關鍵 Hooks：
+
+- `useMarpRenderer.ts`: Marp 渲染管理
+- `useSlideControls.ts`: 投影片導航控制
+- `useSlideThumbnails.ts`: 縮圖生成系統
+- `useAutoSave.ts`: 自動儲存功能

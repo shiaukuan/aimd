@@ -1,0 +1,282 @@
+---
+alwaysApply: true
+description: 測試策略和執行流程規範
+---
+
+# 測試規範
+
+## 測試策略
+
+### 🎯 無例外測試政策
+
+**任何情況下都不應該將任何測試類型標記為「不適用」**
+
+- 每個專案都必須有：unit tests、integration tests、end-to-end tests
+- 如果認為某種測試類型不適用，需要明確授權：「我授權你這次跳過寫測試」
+
+### 📊 測試架構
+
+採用 **Colocation 測試架構**，測試檔案與原始檔並列：
+
+```
+src/
+├── components/
+│   ├── ui/
+│   │   ├── button.tsx
+│   │   └── button.test.tsx     # 單元測試
+│   └── editor/
+│       ├── EditorPanel.tsx
+│       └── EditorPanel.test.tsx
+├── hooks/
+│   ├── useMarpRenderer.ts
+│   └── useMarpRenderer.test.ts
+└── lib/
+    ├── utils.ts
+    └── utils.test.ts
+
+tests/
+└── e2e/
+    ├── basic.spec.ts           # E2E 測試
+    └── slide-editor.spec.ts
+```
+
+## 測試工具配置
+
+### 🧪 單元與整合測試 (Vitest)
+
+```bash
+# 主要測試指令
+pnpm test                    # 執行所有測試
+pnpm test:watch             # 監視模式
+pnpm test:coverage          # 覆蓋率報告
+pnpm test <檔案名>          # 執行特定測試檔案
+```
+
+**重要檔案**：
+
+- 配置檔案: [vitest.config.ts](mdc:vitest.config.ts)
+- 測試設定: [src/test/setup.ts](mdc:src/test/setup.ts)
+
+### 🎭 E2E 測試 (Playwright)
+
+```bash
+# E2E 測試指令
+pnpm test:e2e               # 執行 E2E 測試
+pnpm test:e2e:chrome        # Chrome 瀏覽器
+pnpm test:e2e:ui            # UI 模式
+pnpm test:e2e:headed        # 顯示瀏覽器
+```
+
+**重要檔案**：
+
+- 配置檔案: [playwright.config.ts](mdc:playwright.config.ts)
+- 測試目錄: `tests/e2e/`
+
+## 測試執行流程
+
+### 🔄 強制執行順序
+
+**每撰寫／修改任何程式碼後務必依序執行**：
+
+```bash
+# 1. 執行單元/整合測試
+pnpm test
+
+# 2. 執行端對端測試
+pnpm test:e2e
+```
+
+**若有測試失敗**：
+
+1. 先修正程式或測試
+2. 再重跑兩條指令
+3. 直到**全綠**才能繼續
+
+### 📈 覆蓋率要求
+
+- **閾值標準**: 70% (statements, branches, functions, lines)
+- **監控工具**: @vitest/coverage-v8
+- **檢查指令**: `pnpm test:coverage`
+
+## TDD 實踐流程
+
+### 🔴 Red Phase (失敗測試)
+
+```typescript
+// 1. 先寫一個失敗的測試
+describe('SlideEditor', () => {
+  it('should generate slides from markdown', () => {
+    // 期望的行為但尚未實作
+    expect(generateSlides('# Hello')).toHaveLength(1);
+  });
+});
+```
+
+### 🟢 Green Phase (最小實作)
+
+```typescript
+// 2. 寫最少的程式碼讓測試通過
+function generateSlides(markdown: string) {
+  return [{ content: markdown }]; // 最小實作
+}
+```
+
+### 🔧 Refactor Phase (重構)
+
+```typescript
+// 3. 在測試保護下重構和優化
+function generateSlides(markdown: string): Slide[] {
+  // 改進實作但保持測試通過
+  return parseMarkdownToSlides(markdown);
+}
+```
+
+## 測試撰寫規範
+
+### 📝 測試檔案結構
+
+```typescript
+// ABOUTME: 此檔案測試 Button 元件的各種變體和互動行為
+// ABOUTME: 包含可存取性、點擊事件和樣式變體的測試案例
+
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Button } from './button';
+
+describe('Button', () => {
+  describe('渲染行為', () => {
+    it('should render with default props', () => {
+      // 測試實作
+    });
+  });
+
+  describe('互動行為', () => {
+    it('should handle click events', () => {
+      // 測試實作
+    });
+  });
+
+  describe('可存取性', () => {
+    it('should have proper ARIA attributes', () => {
+      // 測試實作
+    });
+  });
+});
+```
+
+### 🎯 測試撰寫原則
+
+1. **清晰描述**: 測試名稱清楚描述期望行為
+2. **單一職責**: 每個測試只驗證一個行為
+3. **完整覆蓋**: 包含正常、邊界和錯誤情況
+4. **維護性**: 測試易於理解和修改
+
+### 🚨 測試要求
+
+- **必須涵蓋**：正在實作的所有功能
+- **絕不忽略**：系統或測試的輸出
+- **完美輸出**：測試輸出必須完美無缺才通過
+- **錯誤捕獲**：如果應該有錯誤，捕獲並測試它
+
+## 測試案例類型
+
+### 🧪 單元測試
+
+```typescript
+// Hook 測試
+describe('useMarpRenderer', () => {
+  it('should render markdown to HTML', async () => {
+    const { result } = renderHook(() => useMarpRenderer());
+    await act(async () => {
+      await result.current.render('# Test');
+    });
+    expect(result.current.result?.html).toContain('<h1>Test</h1>');
+  });
+});
+
+// 工具函數測試
+describe('utils', () => {
+  it('should merge CSS classes correctly', () => {
+    expect(cn('btn', 'btn-primary')).toBe('btn btn-primary');
+  });
+});
+```
+
+### 🔗 整合測試
+
+```typescript
+// 元件整合測試
+describe('EditorPanel Integration', () => {
+  it('should sync content with preview', async () => {
+    render(<EditorPanelWithPreview />);
+    const editor = screen.getByRole('textbox');
+
+    fireEvent.change(editor, { target: { value: '# New Slide' } });
+
+    await waitFor(() => {
+      expect(screen.getByText('New Slide')).toBeInTheDocument();
+    });
+  });
+});
+```
+
+### 🎭 E2E 測試
+
+```typescript
+// 完整使用者流程測試
+test('should create and preview slides', async ({ page }) => {
+  await page.goto('/');
+
+  // 輸入 Markdown
+  await page.fill('[data-testid="markdown-editor"]', '# Hello World');
+
+  // 檢查預覽
+  await expect(page.locator('[data-testid="slide-preview"]')).toContainText(
+    'Hello World'
+  );
+
+  // 測試導航
+  await page.click('[data-testid="next-slide"]');
+});
+```
+
+## 效能測試
+
+### ⚡ 渲染效能
+
+```typescript
+describe('Performance', () => {
+  it('should render large markdown files efficiently', async () => {
+    const largeMarkdown = '# Slide\n\n'.repeat(100);
+    const start = performance.now();
+
+    await renderMarkdown(largeMarkdown);
+
+    const duration = performance.now() - start;
+    expect(duration).toBeLessThan(1000); // 1秒內完成
+  });
+});
+```
+
+## 可存取性測試
+
+### ♿ A11y 測試
+
+```typescript
+import { axe, toHaveNoViolations } from 'jest-axe';
+
+expect.extend(toHaveNoViolations);
+
+describe('Accessibility', () => {
+  it('should have no accessibility violations', async () => {
+    const { container } = render(<SlideEditor />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+});
+```
+
+參考檔案：
+
+- [測試設定教學](mdc:docs/testing-setup-tutorial.md)
+- [Vitest 配置](mdc:vitest.config.ts)
+- [Playwright 配置](mdc:playwright.config.ts)

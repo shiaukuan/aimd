@@ -1,0 +1,441 @@
+---
+alwaysApply: true
+description: React 元件和 TypeScript 開發規範
+---
+
+# 元件開發規範
+
+## React 元件規範
+
+### 🧩 元件結構模式
+
+所有 React 元件都應遵循統一的結構模式：
+
+```typescript
+// ABOUTME: 此元件負責投影片編輯器的主要容器功能
+// ABOUTME: 整合工具列、編輯區域和狀態列，管理統計計算和格式化操作
+
+import React from 'react';
+import { type ComponentProps } from '@/types';
+
+interface EditorPanelProps {
+  // 完整的 props 型別定義
+  content: string;
+  onChange: (content: string) => void;
+  className?: string;
+}
+
+export function EditorPanel({
+  content,
+  onChange,
+  className
+}: EditorPanelProps) {
+  // Hook 調用
+  const [isModified, setIsModified] = useState(false);
+
+  // 事件處理器
+  const handleContentChange = useCallback((newContent: string) => {
+    onChange(newContent);
+    setIsModified(true);
+  }, [onChange]);
+
+  // 渲染
+  return (
+    <div className={cn('editor-panel', className)}>
+      {/* JSX 內容 */}
+    </div>
+  );
+}
+
+// 預設匯出（如果是主要元件）
+export default EditorPanel;
+```
+
+### 📦 元件匯出規範
+
+```typescript
+// 在 index.ts 中統一匯出
+export { EditorPanel } from './EditorPanel';
+export { MarkdownEditor } from './MarkdownEditor';
+export { EditorToolbar } from './EditorToolbar';
+export { EditorStatusBar } from './EditorStatusBar';
+
+// 型別也要匯出
+export type { EditorPanelProps } from './EditorPanel';
+```
+
+## TypeScript 型別規範
+
+### 🎯 型別定義原則
+
+- **型別優先**: 避免使用 `any`，優先定義明確型別
+- **統一定義**: 所有型別定義放在 `src/types/` 目錄
+- **介面命名**: 使用 PascalCase，元件 Props 以 `Props` 結尾
+
+### 📋 型別定義結構
+
+```typescript
+// src/types/editor.ts
+export interface EditorStats {
+  characters: number;
+  charactersNoSpaces: number;
+  words: number;
+  lines: number;
+  selectedText: string;
+  selectedLength: number;
+  cursorLine: number;
+  cursorColumn: number;
+}
+
+export interface EditorSettings {
+  tabSize: number;
+  insertSpaces: boolean;
+  wordWrap: boolean;
+  lineNumbers: boolean;
+  fontSize: number;
+  theme: 'light' | 'dark' | 'auto';
+}
+
+export type EditorAction =
+  | 'new'
+  | 'open'
+  | 'save'
+  | 'export'
+  | 'bold'
+  | 'italic'
+  | 'heading1'
+  | 'heading2'
+  | 'heading3';
+```
+
+### 🔧 Props 型別設計
+
+```typescript
+// 基礎 Props 介面
+interface BaseComponentProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+// 具體元件 Props
+interface ButtonProps extends BaseComponentProps {
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  disabled?: boolean;
+  onClick?: () => void;
+}
+
+// 使用泛型的進階 Props
+interface FormFieldProps<T> extends BaseComponentProps {
+  value: T;
+  onChange: (value: T) => void;
+  validation?: (value: T) => string | null;
+}
+```
+
+## Hook 開發規範
+
+### 🪝 自定義 Hook 結構
+
+```typescript
+// ABOUTME: 此 Hook 管理 Marp 引擎的渲染邏輯和狀態
+// ABOUTME: 提供 debounced 渲染、錯誤處理和重試機制
+
+import { useState, useCallback, useRef } from 'react';
+import { useDebounce } from './useDebounce';
+
+interface UseMarpRendererOptions {
+  debounceMs?: number;
+  onError?: (error: MarpError) => void;
+}
+
+interface UseMarpRendererReturn {
+  result: MarpRenderResult | null;
+  status: MarpRenderStatus;
+  render: (markdown: string) => Promise<void>;
+  clear: () => void;
+  retry: () => Promise<void>;
+}
+
+export function useMarpRenderer(
+  options: UseMarpRendererOptions = {}
+): UseMarpRendererReturn {
+  // 狀態管理
+  const [result, setResult] = useState<MarpRenderResult | null>(null);
+  const [status, setStatus] = useState<MarpRenderStatus>('idle');
+
+  // 實作邏輯
+  const render = useCallback(async (markdown: string) => {
+    // 渲染邏輯
+  }, []);
+
+  return {
+    result,
+    status,
+    render,
+    clear,
+    retry,
+  };
+}
+```
+
+### 🔄 Hook 使用模式
+
+```typescript
+// 在元件中使用 Hook
+export function SlidePreview() {
+  const { content } = useEditorStore();
+  const {
+    result,
+    status,
+    render
+  } = useMarpRenderer({
+    debounceMs: 300,
+    onError: (error) => console.error('Render error:', error),
+  });
+
+  // 響應內容變化
+  useEffect(() => {
+    if (content) {
+      render(content);
+    }
+  }, [content, render]);
+
+  // 處理不同狀態
+  if (status === 'error') {
+    return <ErrorDisplay />;
+  }
+
+  return <SlideRenderer result={result} />;
+}
+```
+
+## 狀態管理規範
+
+### 🏪 Zustand Store 結構
+
+```typescript
+// ABOUTME: 此 Store 管理編輯器的全域狀態
+// ABOUTME: 包含內容、同步、儲存和錯誤狀態的統一管理
+
+import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
+
+interface EditorState {
+  // 狀態定義
+  content: string;
+  isModified: boolean;
+  error: string | null;
+
+  // 動作定義
+  setContent: (content: string) => void;
+  updateContent: (content: string) => void;
+  setError: (error: string | null) => void;
+  clearError: () => void;
+}
+
+export const useEditorStore = create<EditorState>()(
+  subscribeWithSelector((set, get) => ({
+    // 初始狀態
+    content: '',
+    isModified: false,
+    error: null,
+
+    // 動作實作
+    setContent: content => set({ content, isModified: false }),
+    updateContent: content => set({ content, isModified: true }),
+    setError: error => set({ error }),
+    clearError: () => set({ error: null }),
+  }))
+);
+```
+
+## 效能最佳化規範
+
+### ⚡ React 效能最佳化
+
+```typescript
+// 使用 React.memo 避免不必要的重新渲染
+export const SlideViewer = React.memo<SlideViewerProps>(({
+  slide,
+  isActive
+}) => {
+  return (
+    <div className={cn('slide-viewer', { active: isActive })}>
+      {slide.content}
+    </div>
+  );
+});
+
+// 使用 useMemo 快取昂貴計算
+export function EditorStatusBar({ content }: EditorStatusBarProps) {
+  const stats = useMemo(() =>
+    calculateEditorStats(content),
+    [content]
+  );
+
+  return <div>{stats.words} words</div>;
+}
+
+// 使用 useCallback 穩定函數引用
+export function EditorPanel({ onChange }: EditorPanelProps) {
+  const handleChange = useCallback((newContent: string) => {
+    onChange(newContent);
+  }, [onChange]);
+
+  return <MarkdownEditor onChange={handleChange} />;
+}
+```
+
+### 🔄 防抖動和節流
+
+```typescript
+// 使用 useDebounce 避免過度頻繁更新
+export function useAutoSave(content: string) {
+  const debouncedContent = useDebounce(content, 500);
+
+  useEffect(() => {
+    if (debouncedContent) {
+      saveToLocalStorage(debouncedContent);
+    }
+  }, [debouncedContent]);
+}
+```
+
+## 錯誤處理規範
+
+### 🚨 錯誤邊界
+
+```typescript
+// ABOUTME: 此元件提供 React 錯誤邊界功能
+// ABOUTME: 捕獲子元件錯誤並提供恢復機制
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+export class ErrorBoundary extends React.Component<
+  React.PropsWithChildren<{}>,
+  ErrorBoundaryState
+> {
+  constructor(props: React.PropsWithChildren<{}>) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('錯誤邊界捕獲錯誤:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error} />;
+    }
+
+    return this.props.children;
+  }
+}
+```
+
+### 🔧 錯誤處理模式
+
+```typescript
+// 統一的錯誤處理
+export function handleAsyncError<T>(
+  promise: Promise<T>,
+  onError?: (error: Error) => void
+): Promise<T | null> {
+  return promise.catch((error) => {
+    console.error('非同步操作失敗:', error);
+    if (onError) {
+      onError(error);
+    }
+    return null;
+  });
+}
+
+// 在元件中使用
+export function SlideEditor() {
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSave = async () => {
+    const result = await handleAsyncError(
+      saveSlides(content),
+      (error) => setError(error.message)
+    );
+
+    if (result) {
+      setError(null);
+    }
+  };
+
+  return (
+    <div>
+      {error && <ErrorAlert message={error} />}
+      <button onClick={handleSave}>儲存</button>
+    </div>
+  );
+}
+```
+
+## 可存取性規範
+
+### ♿ A11y 最佳實務
+
+```typescript
+// 提供適當的 ARIA 屬性
+export function SlideControlBar({
+  currentSlide,
+  totalSlides,
+  onPrevious,
+  onNext
+}: SlideControlBarProps) {
+  return (
+    <div
+      role="toolbar"
+      aria-label="投影片導航控制"
+    >
+      <button
+        onClick={onPrevious}
+        disabled={currentSlide === 0}
+        aria-label="上一張投影片"
+      >
+        <ChevronLeft />
+      </button>
+
+      <span
+        aria-live="polite"
+        aria-label={`第 ${currentSlide + 1} 張，共 ${totalSlides} 張投影片`}
+      >
+        {currentSlide + 1} / {totalSlides}
+      </span>
+
+      <button
+        onClick={onNext}
+        disabled={currentSlide === totalSlides - 1}
+        aria-label="下一張投影片"
+      >
+        <ChevronRight />
+      </button>
+    </div>
+  );
+}
+```
+
+參考檔案：
+
+- [型別定義](mdc:src/types/index.ts)
+- [編輯器狀態管理](mdc:src/store/editorStore.ts)
+- [UI 元件範例](mdc:src/components/ui/button.tsx)
+- [Hook 範例](mdc:src/hooks/useMarpRenderer.ts)
