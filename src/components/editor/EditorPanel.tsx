@@ -44,6 +44,7 @@ export function EditorPanel({
     autoSaveEnabled,
     error: storeError,
     isLargeFile,
+    isExternalUpdate: storeIsExternalUpdate,
     clearError,
   } = useEditorStore();
 
@@ -410,10 +411,22 @@ export function EditorPanel({
 
   // 監聽本地內容變化並同步到全域狀態（避免無限循環）
   useEffect(() => {
-    if (isInitialized && localContent !== storeContent) {
+    if (isInitialized && 
+        localContent !== storeContent && 
+        !storeIsExternalUpdate) {
       debouncedSync(localContent);
     }
-  }, [localContent, isInitialized, storeContent, debouncedSync]);
+  }, [localContent, isInitialized, storeContent, storeIsExternalUpdate, debouncedSync]);
+
+  // 監聽外部更新（AI 生成等）並更新本地內容
+  useEffect(() => {
+    if (isInitialized && 
+        storeIsExternalUpdate && 
+        storeContent !== localContent) {
+      console.log('檢測到外部更新 (AI 生成)，更新本地內容');
+      setLocalContent(storeContent);
+    }
+  }, [storeIsExternalUpdate, storeContent, localContent, isInitialized]);
 
   // 計算最後儲存時間
   const lastSaved = lastSaveTime ? new Date(lastSaveTime) : null;

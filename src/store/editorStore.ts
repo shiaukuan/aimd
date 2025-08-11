@@ -25,11 +25,15 @@ export interface EditorState {
   // 效能監控
   contentLength: number;
   isLargeFile: boolean; // >10K 字符
+  
+  // 外部更新標記（AI 生成等）
+  isExternalUpdate: boolean;
 }
 
 export interface EditorActions {
   // 內容操作
   setContent: (content: string) => void;
+  setContentExternal: (content: string) => void; // 外部更新專用
   updateContent: (content: string) => void;
   clearContent: () => void;
   
@@ -66,6 +70,7 @@ const initialState: EditorState = {
   hasError: false,
   contentLength: 0,
   isLargeFile: false,
+  isExternalUpdate: false,
 };
 
 export const useEditorStore = create<EditorStore>()(
@@ -82,7 +87,25 @@ export const useEditorStore = create<EditorStore>()(
           isLargeFile: contentLength > 10000,
           isModified: content !== get().content,
           isSync: false,
+          isExternalUpdate: false, // 一般更新
         }, false, 'setContent');
+      },
+
+      setContentExternal: (content: string) => {
+        const contentLength = content.length;
+        set({
+          content,
+          contentLength,
+          isLargeFile: contentLength > 10000,
+          isModified: false, // 外部更新不算修改
+          isSync: true,
+          isExternalUpdate: true, // 標記為外部更新
+        }, false, 'setContentExternal');
+        
+        // 100ms 後清除外部更新標記
+        setTimeout(() => {
+          set({ isExternalUpdate: false }, false, 'clearExternalFlag');
+        }, 100);
       },
       
       updateContent: (content: string) => {

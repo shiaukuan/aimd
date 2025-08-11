@@ -6,7 +6,7 @@ import { EditorPanel } from '@/components/editor/EditorPanel';
 import { PreviewPanel } from '@/components/preview/PreviewPanel';
 import { AiGenerationPanel } from '@/components/editor/AiGenerationPanel';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Wand2, X } from 'lucide-react';
 import { useEditorStore } from '@/store/editorStore';
 
@@ -37,14 +37,7 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   
   // 取得編輯器狀態管理
-  const { content, setContent } = useEditorStore();
-  
-  // 初始化默認內容
-  useEffect(() => {
-    if (!content.trim()) {
-      setContent(DEFAULT_CONTENT);
-    }
-  }, [content, setContent]);
+  const { setContentExternal } = useEditorStore();
 
   const handleSave = (content: string) => {
     console.log('儲存內容:', content);
@@ -67,7 +60,7 @@ export default function Home() {
 
   // AI 生成處理函數
   const handleAiGenerate = (content: string) => {
-    setContent(content);  // 更新 Zustand store
+    setContentExternal(content);  // 使用外部更新方法
     setShowAiPanel(false);  // 關閉 AI 面板
     setIsGenerating(false);
   };
@@ -120,6 +113,7 @@ export default function Home() {
       >
         {/* Left Panel - Editor */}
         <EditorPanel
+          content={DEFAULT_CONTENT}
           placeholder="在這裡輸入你的 Markdown 內容..."
           callbacks={{
             onSave: handleSave,
