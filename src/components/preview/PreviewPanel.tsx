@@ -185,6 +185,15 @@ export function PreviewPanel({
     }
   }, [content, enableSync, debouncedRender]);
 
+  // 當內容被清空時，重置渲染與投影片狀態，確保後續重新渲染會重新綁定 ResizeObserver
+  useEffect(() => {
+    if (!content.trim()) {
+      setIsMarpRendered(false);
+      setSlideData(null);
+      setCurrentSlide(0);
+    }
+  }, [content]);
+
   // 投影片導航函數
   const goToSlide = useCallback(
     (slideIndex: number) => {
