@@ -23,7 +23,6 @@ import { Button } from '@/components/ui/button';
 import { ErrorBoundaryWrapper } from '@/components/ui/ErrorBoundary';
 import { useEditorStore } from '@/store/editorStore';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useSlideScaling } from '@/hooks/useSlideScaling';
 
 interface PreviewPanelProps {
   className?: string;
@@ -61,18 +60,10 @@ export function PreviewPanel({
   const [isRendering, setIsRendering] = useState(false);
   const [renderError, setRenderError] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isMarpRendered, setIsMarpRendered] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
   const marpRef = useRef<Marp | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
-  const scalingWrapperRef = useRef<HTMLDivElement | null>(null);
-
-  const scalingStyle = useSlideScaling({
-    viewportRef,
-    wrapperRef: scalingWrapperRef,
-    isRendered: isMarpRendered,
-  });
 
   // 初始化 Marp 實例
   useEffect(() => {
@@ -168,7 +159,6 @@ export function PreviewPanel({
       const result = await renderSlides(markdown);
       if (result) {
         setSlideData(result);
-        setIsMarpRendered(true); // 標記為已渲染
         // 如果當前投影片超出範圍，重設為第一張
         if (currentSlide >= result.slideCount) {
           setCurrentSlide(0);
@@ -185,10 +175,9 @@ export function PreviewPanel({
     }
   }, [content, enableSync, debouncedRender]);
 
-  // 當內容被清空時，重置渲染與投影片狀態，確保後續重新渲染會重新綁定 ResizeObserver
+  // 當內容被清空時，重置渲染與投影片狀態
   useEffect(() => {
     if (!content.trim()) {
-      setIsMarpRendered(false);
       setSlideData(null);
       setCurrentSlide(0);
     }
@@ -383,67 +372,21 @@ export function PreviewPanel({
     toggleFullscreen,
   ]);
 
-  // 生成內聯樣式
+  // 生成內聯樣式 - 完全使用 Marp 原生樣式
   const inlineStyles = useMemo(() => {
     if (!slideData?.css) return '';
 
     return `
       <style>
         ${slideData.css}
-        section {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          padding: 2rem;
-          box-sizing: border-box;
-          background: white;
-          border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          margin-bottom: 1rem;
-        }
         
-        .marp-container {
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-        }
-        
-        /* 修復清單樣式顯示問題 */
-        section ol {
-          list-style-type: decimal !important;
-          list-style-position: outside !important;
-          margin-left: 1em;
-          padding-left: 1em;
-        }
-        
-        section ul {
-          list-style-type: disc !important;
-          list-style-position: outside !important;
-          margin-left: 1em;
-          padding-left: 1em;
-        }
-        
-        section ol ol {
-          list-style-type: lower-roman !important;
-        }
-        
-        section ol ol ol {
-          list-style-type: lower-alpha !important;
-        }
-        
-        section ul ul {
-          list-style-type: circle !important;
-        }
-        
-        section ul ul ul {
-          list-style-type: square !important;
-        }
-        
-        section li {
-          margin-bottom: 0.5em;
+        /* 防止 img 元素不當換行 */
+        img, 
+        img.emoji,
+        img[data-marp-twemoji] {
+          display: inline !important;
+          vertical-align: baseline !important;
+          white-space: nowrap !important;
         }
       </style>
     `;
@@ -623,14 +566,12 @@ export function PreviewPanel({
           ref={viewportRef}
           className="flex-1 overflow-hidden relative bg-muted/30"
         >
-          <div ref={scalingWrapperRef} style={scalingStyle}>
-            <div
-              className="marp-container"
-              dangerouslySetInnerHTML={{
-                __html: inlineStyles + slideData.html,
-              }}
-            />
-          </div>
+          <div
+            className="marp-container"
+            dangerouslySetInnerHTML={{
+              __html: inlineStyles + slideData.html,
+            }}
+          />
         </div>
 
         {/* 投影片指示器 */}
