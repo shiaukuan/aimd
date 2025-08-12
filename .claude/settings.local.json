@@ -40,7 +40,9 @@
       "Bash(pnpm remove:*)",
       "Bash(pnpm start:*)",
       "mcp__playwright__browser_evaluate",
-      "mcp__playwright__browser_close"
+      "mcp__playwright__browser_close",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_console_messages"
     ],
     "deny": []
   },

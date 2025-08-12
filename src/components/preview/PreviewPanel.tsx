@@ -120,15 +120,58 @@ export function PreviewPanel({
         onRenderComplete(slideData.slideCount);
       }
 
-      // 預設隱藏所有投影片，除了第一張
+      // 預設隱藏所有投影片，除了第一張，並檢測溢出
       setTimeout(() => {
         if (previewRef.current) {
           const slides = previewRef.current.querySelectorAll('section');
           slides.forEach((slide, index) => {
+            const slideElement = slide as HTMLElement;
             if (index === 0) {
-              (slide as HTMLElement).style.display = 'flex';
+              slideElement.style.display = 'flex';
+
+              // 檢測第一張投影片的內容溢出和段落數量
+              setTimeout(() => {
+                const container = previewRef.current;
+                if (container) {
+                  const containerHeight = container.offsetHeight - 120;
+                  const slideHeight = slideElement.scrollHeight;
+                  const overflow = slideHeight - containerHeight;
+
+                  // 計算段落數量（包含更多元素類型）
+                  const paragraphs = slideElement.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, div');
+                  const textLines = slideElement.textContent?.split('\n').filter(line => line.trim()).length || 0;
+                  const paragraphCount = Math.max(paragraphs.length, Math.floor(textLines / 2));
+                  
+                  // 調試資訊
+                  console.log('字體縮放檢測 - 段落數:', paragraphCount, '文字行數:', textLines, '元素數:', paragraphs.length);
+
+                  // 移除所有縮放相關的 class
+                  slideElement.classList.remove(
+                    'content-overflow',
+                    'content-overflow-large',
+                    'many-paragraphs',
+                    'very-many-paragraphs'
+                  );
+
+                  // 根據段落數量添加 class（測試用低閾值）
+                  if (paragraphCount >= 4) {
+                    slideElement.classList.add('very-many-paragraphs');
+                    console.log('應用 very-many-paragraphs class，段落數:', paragraphCount);
+                  } else if (paragraphCount >= 3) {
+                    slideElement.classList.add('many-paragraphs');
+                    console.log('應用 many-paragraphs class，段落數:', paragraphCount);
+                  }
+
+                  // 根據高度溢出添加 class
+                  if (overflow > 200) {
+                    slideElement.classList.add('content-overflow-large');
+                  } else if (overflow > 50) {
+                    slideElement.classList.add('content-overflow');
+                  }
+                }
+              }, 50);
             } else {
-              (slide as HTMLElement).style.display = 'none';
+              slideElement.style.display = 'none';
             }
           });
         }
@@ -201,6 +244,49 @@ export function PreviewPanel({
         const slideElement = slide as HTMLElement;
         if (index === newIndex) {
           slideElement.style.display = 'flex';
+
+          // 檢測內容是否溢出並計算段落數量，添加對應的 class
+          setTimeout(() => {
+            const container = previewRef.current;
+            if (container) {
+              const containerHeight = container.offsetHeight - 120; // 扣除工具列高度
+              const slideHeight = slideElement.scrollHeight;
+              const overflow = slideHeight - containerHeight;
+
+              // 計算段落數量（包含更多元素類型）
+              const paragraphs = slideElement.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, div');
+              const textLines = slideElement.textContent?.split('\n').filter(line => line.trim()).length || 0;
+              const paragraphCount = Math.max(paragraphs.length, Math.floor(textLines / 2));
+              
+              // 調試資訊
+              console.log('字體縮放檢測 - 段落數:', paragraphCount, '文字行數:', textLines, '元素數:', paragraphs.length);
+
+              // 移除所有縮放相關的 class
+              slideElement.classList.remove(
+                'content-overflow',
+                'content-overflow-large',
+                'many-paragraphs',
+                'very-many-paragraphs'
+              );
+
+              // 根據段落數量添加 class（測試用低閾值）
+              if (paragraphCount >= 4) {
+                slideElement.classList.add('very-many-paragraphs');
+                console.log('應用 very-many-paragraphs class，段落數:', paragraphCount);
+              } else if (paragraphCount >= 3) {
+                slideElement.classList.add('many-paragraphs');
+                console.log('應用 many-paragraphs class，段落數:', paragraphCount);
+              }
+
+              // 根據溢出程度添加對應 class
+              if (overflow > 200) {
+                slideElement.classList.add('content-overflow-large');
+              } else if (overflow > 50) {
+                slideElement.classList.add('content-overflow');
+              }
+            }
+          }, 50); // 等待元素渲染完成
+
           // 確保滾動到可見區域
           slideElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
@@ -388,6 +474,54 @@ export function PreviewPanel({
           vertical-align: baseline !important;
           white-space: nowrap !important;
         }
+        
+        /* 自動偵測內容過多的投影片並縮小字體 */
+        /* 針對有很多段落的投影片 */
+        section.many-paragraphs {
+          font-size: 0.9em !important;
+        }
+        
+        section.many-paragraphs p,
+        section.many-paragraphs li,
+        section.many-paragraphs div,
+        section.many-paragraphs h1,
+        section.many-paragraphs h2,
+        section.many-paragraphs h3,
+        section.many-paragraphs h4,
+        section.many-paragraphs h5,
+        section.many-paragraphs h6 {
+          font-size: 0.9em !important;
+          line-height: 1.3 !important;
+        }
+        
+        section.very-many-paragraphs {
+          font-size: 0.85em !important;
+        }
+        
+        section.very-many-paragraphs p,
+        section.very-many-paragraphs li,
+        section.very-many-paragraphs div,
+        section.very-many-paragraphs h1,
+        section.very-many-paragraphs h2,
+        section.very-many-paragraphs h3,
+        section.very-many-paragraphs h4,
+        section.very-many-paragraphs h5,
+        section.very-many-paragraphs h6 {
+          font-size: 0.8em !important;
+          line-height: 1.25 !important;
+        }
+        
+        /* 使用 JavaScript 動態檢測高度溢出 */
+        section.content-overflow {
+          transform: scale(0.85) !important;
+          transform-origin: top center !important;
+        }
+        
+        section.content-overflow-large {
+          transform: scale(0.75) !important;
+          transform-origin: top center !important;
+        }
+        
       </style>
     `;
   }, [slideData?.css]);
