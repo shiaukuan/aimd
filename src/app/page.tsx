@@ -35,7 +35,7 @@ export default function Home() {
   const [slideCount, setSlideCount] = useState(1);
   const [showAiPanel, setShowAiPanel] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  
+
   // 取得編輯器狀態管理
   const { setContentExternal } = useEditorStore();
 
@@ -60,39 +60,22 @@ export default function Home() {
 
   // AI 生成處理函數
   const handleAiGenerate = (content: string) => {
-    setContentExternal(content);  // 使用外部更新方法
-    setShowAiPanel(false);  // 關閉 AI 面板
+    setContentExternal(content); // 使用外部更新方法
+    setShowAiPanel(false); // 關閉 AI 面板
     setIsGenerating(false);
   };
 
-  const handleAiError = (error: { message: string; code?: string; status?: number }) => {
+  const handleAiError = (error: {
+    message: string;
+    code?: string;
+    status?: number;
+  }) => {
     setIsGenerating(false);
     console.error('AI 生成錯誤:', error);
   };
 
   return (
     <MainLayout>
-      {/* AI 生成面板切換按鈕 */}
-      <div className="flex justify-end p-4">
-        <Button
-          onClick={() => setShowAiPanel(!showAiPanel)}
-          variant={showAiPanel ? "default" : "outline"}
-          className="gap-2"
-        >
-          {showAiPanel ? (
-            <>
-              <X className="h-4 w-4" />
-              關閉 AI 面板
-            </>
-          ) : (
-            <>
-              <Wand2 className="h-4 w-4" />
-              AI 生成投影片
-            </>
-          )}
-        </Button>
-      </div>
-
       {/* AI 生成面板 */}
       {showAiPanel && (
         <div className="mb-6 px-4">
@@ -115,6 +98,26 @@ export default function Home() {
         <EditorPanel
           content={DEFAULT_CONTENT}
           placeholder="在這裡輸入你的 Markdown 內容..."
+          headerActions={
+            <Button
+              onClick={() => setShowAiPanel(!showAiPanel)}
+              variant={showAiPanel ? 'default' : 'outline'}
+              className="gap-2"
+              size="sm"
+            >
+              {showAiPanel ? (
+                <>
+                  <X className="h-4 w-4" />
+                  關閉 AI 面板
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-4 w-4" />
+                  AI 生成投影片
+                </>
+              )}
+            </Button>
+          }
           callbacks={{
             onSave: handleSave,
             onExport: handleExport,

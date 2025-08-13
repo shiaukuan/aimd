@@ -31,6 +31,7 @@ export function EditorPanel({
   placeholder = '在這裡輸入你的 Markdown 內容...',
   readOnly = false,
   className,
+  headerActions,
   settings,
   callbacks,
 }: EditorPanelProps) {
@@ -411,18 +412,28 @@ export function EditorPanel({
 
   // 監聽本地內容變化並同步到全域狀態（避免無限循環）
   useEffect(() => {
-    if (isInitialized && 
-        localContent !== storeContent && 
-        !storeIsExternalUpdate) {
+    if (
+      isInitialized &&
+      localContent !== storeContent &&
+      !storeIsExternalUpdate
+    ) {
       debouncedSync(localContent);
     }
-  }, [localContent, isInitialized, storeContent, storeIsExternalUpdate, debouncedSync]);
+  }, [
+    localContent,
+    isInitialized,
+    storeContent,
+    storeIsExternalUpdate,
+    debouncedSync,
+  ]);
 
   // 監聽外部更新（AI 生成等）並更新本地內容
   useEffect(() => {
-    if (isInitialized && 
-        storeIsExternalUpdate && 
-        storeContent !== localContent) {
+    if (
+      isInitialized &&
+      storeIsExternalUpdate &&
+      storeContent !== localContent
+    ) {
       console.log('檢測到外部更新 (AI 生成)，更新本地內容');
       setLocalContent(storeContent);
     }
@@ -477,6 +488,9 @@ export function EditorPanel({
         {/* 標題列 */}
         <div className="flex items-center justify-between p-3 border-b bg-background">
           <h2 className="text-lg font-semibold">Markdown 編輯器</h2>
+          {headerActions && (
+            <div className="flex items-center gap-2">{headerActions}</div>
+          )}
         </div>
 
         {/* 工具列 */}

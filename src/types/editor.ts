@@ -1,5 +1,6 @@
 // ABOUTME: 編輯器組件專用的型別定義檔案
 // ABOUTME: 包含工具列、編輯器面板、狀態管理等相關型別
+import type { ReactNode } from 'react';
 
 // 編輯器設定
 export interface EditorSettings {
@@ -85,6 +86,8 @@ export interface EditorPanelProps {
   placeholder?: string;
   readOnly?: boolean;
   className?: string;
+  // 自訂標題列右側動作區域（例如：按鈕）
+  headerActions?: ReactNode;
   settings?: Partial<EditorSettings>;
   callbacks?: EditorCallbacks;
 }
@@ -153,4 +156,3 @@ export interface AiGenerationPanelProps {
   className?: string;
   onError?: (error: AiGenerationError) => void;
 }
-
