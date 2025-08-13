@@ -92,7 +92,7 @@ export default function Home() {
 
       <div className="w-full px-2">
         <SplitPanel
-          className="h-[calc(100vh-140px)] w-full rounded-xl border border-border/50 shadow-xl backdrop-blur-sm bg-card/30 overflow-hidden"
+          className="h-[calc(100vh-160px)] w-full rounded-xl border border-border/50 shadow-xl backdrop-blur-sm bg-card/30 overflow-hidden"
           minLeftWidth={450}
           minRightWidth={550}
           storageKey="markdown-editor-split"

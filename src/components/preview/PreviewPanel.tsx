@@ -508,6 +508,38 @@ export function PreviewPanel({
       <style>
         ${slideData.css}
         
+        /* 修復清單樣式顯示 */
+        .marp-container ul {
+          list-style-type: disc !important;
+          list-style-position: outside !important;
+        }
+        
+        .marp-container ol {
+          list-style-type: decimal !important;
+          list-style-position: outside !important;
+        }
+        
+        .marp-container ul ul {
+          list-style-type: circle !important;
+        }
+        
+        .marp-container ul ul ul {
+          list-style-type: square !important;
+        }
+        
+        .marp-container ol ol {
+          list-style-type: lower-alpha !important;
+        }
+        
+        .marp-container ol ol ol {
+          list-style-type: lower-roman !important;
+        }
+        
+        .marp-container li {
+          list-style: inherit !important;
+          display: list-item !important;
+        }
+        
         /* 防止 img 元素不當換行 */
         img, 
         img.emoji,
