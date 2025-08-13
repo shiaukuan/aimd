@@ -78,66 +78,75 @@ export default function Home() {
     <MainLayout>
       {/* AI 生成面板 */}
       {showAiPanel && (
-        <div className="mb-6 px-4">
-          <AiGenerationPanel
-            onGenerate={handleAiGenerate}
-            isGenerating={isGenerating}
-            onError={handleAiError}
-            className="max-w-2xl mx-auto"
-          />
+        <div className="mb-8 px-4">
+          <div className="max-w-4xl mx-auto">
+            <AiGenerationPanel
+              onGenerate={handleAiGenerate}
+              isGenerating={isGenerating}
+              onError={handleAiError}
+              className="backdrop-blur-sm bg-card/80 border border-border/50 rounded-xl shadow-lg"
+            />
+          </div>
         </div>
       )}
 
-      <SplitPanel
-        className="h-[calc(100vh-200px)]"
-        minLeftWidth={400}
-        minRightWidth={500}
-        storageKey="markdown-editor-split"
-      >
-        {/* Left Panel - Editor */}
-        <EditorPanel
-          content={DEFAULT_CONTENT}
-          placeholder="在這裡輸入你的 Markdown 內容..."
-          headerActions={
-            <Button
-              onClick={() => setShowAiPanel(!showAiPanel)}
-              variant={showAiPanel ? 'default' : 'outline'}
-              className="gap-2"
-              size="sm"
-            >
-              {showAiPanel ? (
-                <>
-                  <X className="h-4 w-4" />
-                  關閉 AI 面板
-                </>
-              ) : (
-                <>
-                  <Wand2 className="h-4 w-4" />
-                  AI 生成投影片
-                </>
-              )}
-            </Button>
-          }
-          callbacks={{
-            onSave: handleSave,
-            onExport: handleExport,
-            onError: handleError,
-          }}
-        />
+      <div className="w-full px-2">
+        <SplitPanel
+          className="h-[calc(100vh-140px)] w-full rounded-xl border border-border/50 shadow-xl backdrop-blur-sm bg-card/30 overflow-hidden"
+          minLeftWidth={450}
+          minRightWidth={550}
+          storageKey="markdown-editor-split"
+        >
+          {/* Left Panel - Editor */}
+          <EditorPanel
+            content={DEFAULT_CONTENT}
+            placeholder="在這裡輸入你的 Markdown 內容..."
+            headerActions={
+              <Button
+                onClick={() => setShowAiPanel(!showAiPanel)}
+                variant={showAiPanel ? 'default' : 'outline'}
+                className="gap-2 shadow-md hover:shadow-lg transition-all duration-200"
+                size="sm"
+              >
+                {showAiPanel ? (
+                  <>
+                    <X className="h-4 w-4" />
+                    關閉 AI 面板
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="h-4 w-4" />
+                    AI 生成投影片
+                  </>
+                )}
+              </Button>
+            }
+            callbacks={{
+              onSave: handleSave,
+              onExport: handleExport,
+              onError: handleError,
+            }}
+          />
 
-        {/* Right Panel - Preview */}
-        <PreviewPanel
-          enableSync={true}
-          syncDelay={300}
-          onError={handleError}
-          onRenderComplete={handleRenderComplete}
-        />
-      </SplitPanel>
+          {/* Right Panel - Preview */}
+          <PreviewPanel
+            enableSync={true}
+            syncDelay={300}
+            onError={handleError}
+            onRenderComplete={handleRenderComplete}
+          />
+        </SplitPanel>
 
-      <div className="mt-8 space-y-4">
-        {/* 投影片統計 */}
-        <div className="text-center text-sm text-muted-foreground">
-          目前有 {slideCount} 張投影片
+        <div className="mt-8 space-y-4">
+          {/* 投影片統計 */}
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 border border-border/30 backdrop-blur-sm">
+              <div className="h-2 w-2 rounded-full bg-primary/60"></div>
+              <span className="text-sm text-muted-foreground font-medium">
+                目前有 {slideCount} 張投影片
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </MainLayout>

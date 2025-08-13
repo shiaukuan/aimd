@@ -134,9 +134,9 @@ describe('EditorToolbar', () => {
     render(<EditorToolbar />);
 
     const toolbar = screen.getByTestId('editor-toolbar');
-    const separators = toolbar.querySelectorAll('.w-px.h-6.bg-border');
+    const separators = toolbar.querySelectorAll('.w-px.h-5.bg-border');
 
-    // 應該有分隔線存在（具體數量取決於顯示的群組數）
+    // 雙排佈局中每排應該有分隔線存在
     expect(separators.length).toBeGreaterThan(0);
   });
 
@@ -144,9 +144,9 @@ describe('EditorToolbar', () => {
     render(<EditorToolbar />);
 
     const boldButton = screen.getByTestId('toolbar-bold');
-    const labelSpan = boldButton.querySelector('.hidden.sm\\:inline');
+    const labelSpan = boldButton.querySelector('.text-xs');
 
     expect(labelSpan).toBeInTheDocument();
-    expect(labelSpan).toHaveClass('hidden', 'sm:inline');
+    expect(labelSpan).toHaveClass('text-xs');
   });
 });

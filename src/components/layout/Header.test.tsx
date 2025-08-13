@@ -38,21 +38,21 @@ describe('Header', () => {
     expect(header).toHaveClass('border-b');
     
     const container = header.querySelector('div');
-    expect(container).toHaveClass('container', 'mx-auto', 'px-4', 'py-4');
+    expect(container).toHaveClass('container', 'mx-auto', 'px-6', 'py-3');
   });
 
   it('should have proper heading hierarchy', () => {
     render(<Header />);
     
     const heading = screen.getByRole('heading', { level: 1 });
-    expect(heading).toHaveClass('text-2xl', 'font-bold');
+    expect(heading).toHaveClass('text-lg', 'font-bold');
   });
 
   it('should have muted description text', () => {
     render(<Header />);
     
     const description = screen.getByText('使用 Markdown 輕鬆創建專業投影片');
-    expect(description).toHaveClass('text-muted-foreground');
+    expect(description).toHaveClass('text-muted-foreground', 'text-xs');
   });
 
   it('should be accessible with proper ARIA attributes', () => {

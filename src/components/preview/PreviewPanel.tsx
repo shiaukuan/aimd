@@ -618,13 +618,15 @@ export function PreviewPanel({
       >
         {/* 標題列 - 全螢幕時隱藏 */}
         {!isFullscreen && (
-          <div className="flex items-center justify-between p-3 border-b bg-background">
-            <h2 className="text-lg font-semibold">預覽</h2>
+          <div className="flex items-center justify-between p-3 border-b bg-gradient-to-r from-background via-background to-muted/20 backdrop-blur-sm">
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              預覽
+            </h2>
           </div>
         )}
 
         {/* 工具列 */}
-        <div className="flex items-center justify-between p-2 border-b bg-background/80 backdrop-blur-sm">
+        <div className="flex items-center justify-between p-2 border-b bg-muted/30 backdrop-blur-sm shadow-sm">
           <div className="flex items-center space-x-2">
             <Button
               variant="ghost"

@@ -163,42 +163,78 @@ export function EditorToolbar({
   return (
     <div
       className={cn(
-        'flex items-center gap-1 p-2 border-b bg-background',
-        'overflow-x-auto scrollbar-thin scrollbar-thumb-border',
+        'flex flex-col gap-1 p-2 border-b bg-muted/30 backdrop-blur-sm shadow-sm',
         className
       )}
       data-testid="editor-toolbar"
     >
-      {filteredGroups.map((group, groupIndex) => (
-        <React.Fragment key={group.id}>
-          <div className="flex items-center gap-1">
-            {group.items.map(item => (
-              <Button
-                key={item.id}
-                variant={isActive(item.action) ? 'default' : 'ghost'}
-                size="sm"
-                disabled={disabled || item.disabled}
-                onClick={() => handleAction(item.action)}
-                title={item.tooltip}
-                className={cn(
-                  'h-8 px-2 text-xs font-medium',
-                  'hover:bg-accent hover:text-accent-foreground',
-                  isActive(item.action) && 'bg-accent text-accent-foreground'
-                )}
-                data-testid={`toolbar-${item.id}`}
-              >
-                <span className="mr-1 text-sm">{item.icon}</span>
-                <span className="hidden sm:inline">{item.label}</span>
-              </Button>
-            ))}
-          </div>
+      {/* 第一排：檔案操作 + 格式化 */}
+      <div className="flex items-center justify-start gap-1 w-full">
+        {filteredGroups.slice(0, 2).map((group, groupIndex) => (
+          <React.Fragment key={group.id}>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {group.items.map(item => (
+                <Button
+                  key={item.id}
+                  variant={isActive(item.action) ? 'default' : 'ghost'}
+                  size="sm"
+                  disabled={disabled || item.disabled}
+                  onClick={() => handleAction(item.action)}
+                  title={item.tooltip}
+                  className={cn(
+                    'h-7 px-2 text-xs font-medium flex-shrink-0',
+                    'hover:bg-accent hover:text-accent-foreground',
+                    isActive(item.action) && 'bg-accent text-accent-foreground'
+                  )}
+                  data-testid={`toolbar-${item.id}`}
+                >
+                  <span className="mr-1 text-sm">{item.icon}</span>
+                  <span className="text-xs whitespace-nowrap">{item.label}</span>
+                </Button>
+              ))}
+            </div>
 
-          {/* 組與組之間的分隔線 */}
-          {groupIndex < filteredGroups.length - 1 && (
-            <div className="w-px h-6 bg-border mx-1" />
-          )}
-        </React.Fragment>
-      ))}
+            {/* 組與組之間的分隔線 */}
+            {groupIndex < 1 && (
+              <div className="w-px h-5 bg-border mx-1 flex-shrink-0" />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+
+      {/* 第二排：清單 + 插入 */}
+      <div className="flex items-center justify-start gap-1 w-full">
+        {filteredGroups.slice(2).map((group, groupIndex) => (
+          <React.Fragment key={group.id}>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {group.items.map(item => (
+                <Button
+                  key={item.id}
+                  variant={isActive(item.action) ? 'default' : 'ghost'}
+                  size="sm"
+                  disabled={disabled || item.disabled}
+                  onClick={() => handleAction(item.action)}
+                  title={item.tooltip}
+                  className={cn(
+                    'h-7 px-2 text-xs font-medium flex-shrink-0',
+                    'hover:bg-accent hover:text-accent-foreground',
+                    isActive(item.action) && 'bg-accent text-accent-foreground'
+                  )}
+                  data-testid={`toolbar-${item.id}`}
+                >
+                  <span className="mr-1 text-sm">{item.icon}</span>
+                  <span className="text-xs whitespace-nowrap">{item.label}</span>
+                </Button>
+              ))}
+            </div>
+
+            {/* 組與組之間的分隔線 */}
+            {groupIndex < filteredGroups.slice(2).length - 1 && (
+              <div className="w-px h-5 bg-border mx-1 flex-shrink-0" />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   );
 }

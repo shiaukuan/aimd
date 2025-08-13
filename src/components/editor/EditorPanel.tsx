@@ -486,8 +486,10 @@ export function EditorPanel({
         )}
 
         {/* 標題列 */}
-        <div className="flex items-center justify-between p-3 border-b bg-background">
-          <h2 className="text-lg font-semibold">Markdown 編輯器</h2>
+        <div className="flex items-center justify-between p-3 border-b bg-gradient-to-r from-background via-background to-muted/20 backdrop-blur-sm">
+          <h2 className="text-lg font-semibold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            Markdown 編輯器
+          </h2>
           {headerActions && (
             <div className="flex items-center gap-2">{headerActions}</div>
           )}
