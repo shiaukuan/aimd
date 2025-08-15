@@ -9,8 +9,8 @@ import { Button } from './button';
 
 export interface ErrorInfo {
   componentStack: string;
-  errorBoundary?: string | undefined;
-  errorBoundaryStack?: string | undefined;
+  errorBoundary?: string;
+  errorBoundaryStack?: string;
 }
 
 interface ErrorBoundaryState {

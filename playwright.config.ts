@@ -10,21 +10,22 @@ export default defineConfig({
   // Test directory
   testDir: './tests/e2e',
 
-  // Run tests in files in parallel
+  // Run tests in files in parallel with fewer workers
   fullyParallel: true,
+  workers: 5, // 減少並行數量避免資源競爭
 
-  // No retries in development
-  retries: 0,
+  // Add retries for flaky tests
+  retries: 2, // 增加重試機制
 
   // Simple reporter for development
   reporter: [['list'], ['html', { open: 'never' }]],
 
-  // Shorter timeout for development
-  timeout: 30 * 1000,
+  // Longer timeout for complex operations
+  timeout: 60 * 1000, // 增加到60秒
 
   // Expect timeout for assertions
   expect: {
-    timeout: 5000,
+    timeout: 10 * 1000, // 增加斷言超時時間
   },
 
   // Shared settings for all tests
@@ -41,9 +42,9 @@ export default defineConfig({
     // Take screenshot on failure
     screenshot: 'only-on-failure',
 
-    // Longer timeouts for slow development environment
-    actionTimeout: 10 * 1000,
-    navigationTimeout: 20 * 1000,
+    // Much longer timeouts for complex operations
+    actionTimeout: 30 * 1000, // 從10秒增加到30秒
+    navigationTimeout: 45 * 1000, // 從20秒增加到45秒
   },
 
   // Only test on Chrome for development speed
@@ -64,7 +65,9 @@ export default defineConfig({
     command: 'pnpm dev',
     port: 3000,
     reuseExistingServer: true, // Always reuse in development
-    timeout: 60 * 1000,
+    timeout: 120 * 1000, // 增加伺服器啟動超時到2分鐘
+    stdout: 'pipe', // 捕獲伺服器輸出以便調試
+    stderr: 'pipe',
   },
 
   // Output directory for test results

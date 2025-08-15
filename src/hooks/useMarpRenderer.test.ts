@@ -119,13 +119,22 @@ describe('useMarpRenderer', () => {
         mockEngine as unknown as ReturnType<typeof getMarpEngine>
       );
 
+      // 啟動渲染但不等待完成
       act(() => {
-        void result.current.render('# 測試');
+        result.current.render('# 測試');
       });
 
       // 應該進入載入狀態
-      expect(result.current.status.isRendering).toBe(true);
-      expect(result.current.status.state).toBe('rendering');
+      await waitFor(() => {
+        expect(result.current.status.isRendering).toBe(true);
+        expect(result.current.status.state).toBe('rendering');
+      });
+
+      // 等待渲染完成
+      await waitFor(() => {
+        expect(result.current.status.isRendering).toBe(false);
+        expect(result.current.status.state).toBe('success');
+      }, { timeout: 500 });
     });
 
     it('應能處理渲染選項', async () => {

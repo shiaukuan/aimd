@@ -28,6 +28,19 @@ export interface AutoSaveStatus {
   saveCount: number;
 }
 
+export interface UseAutoSaveReturn {
+  save: () => Promise<boolean>;
+  loadSavedContent: () => {
+    content: string;
+    timestamp: number | null;
+    hasData: boolean;
+  };
+  clearSavedContent: () => void;
+  getStatus: () => AutoSaveStatus;
+  startAutoSave: () => void;
+  stopAutoSave: () => void;
+}
+
 const DEFAULT_OPTIONS: Required<UseAutoSaveOptions> = {
   interval: 30000, // 30 秒
   key: 'markdown-editor-content',
@@ -37,7 +50,7 @@ const DEFAULT_OPTIONS: Required<UseAutoSaveOptions> = {
   onError: () => {},
 };
 
-export function useAutoSave(options: UseAutoSaveOptions = {}) {
+export function useAutoSave(options: UseAutoSaveOptions = {}): UseAutoSaveReturn {
   const opts = useMemo(() => ({ ...DEFAULT_OPTIONS, ...options }), [options]);
 
   const { content, isModified, autoSaveEnabled, updateSaveTime, setError } =

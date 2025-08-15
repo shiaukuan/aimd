@@ -1,18 +1,40 @@
-// ABOUTME: API 路由處理 AI 投影片生成請求，整合 OpenAI API
+// ABOUTME: API 路由處理 AI 投影片生成請求，整合 OpenAI 兼容 API（支援 GitHub Models）
 // ABOUTME: 支援自訂 baseURL、model 參數，並處理錯誤和回應格式化
 
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
-import { aiGenerationRequestSchema } from '@/lib/validations';
+import { aiGenerationSettingsSchema } from '@/lib/validations';
 import type { AiGenerationResponse, AiGenerationError } from '@/types/editor';
 
 export async function POST(request: NextRequest) {
   try {
     // 解析和驗證請求資料
     const body = await request.json();
-    const validatedData = aiGenerationRequestSchema.parse(body);
+    
+    let baseUrl: string;
+    let apiKey: string;
+    let model: string;
+    let prompt: string;
 
-    const { baseUrl, apiKey, model, prompt } = validatedData;
+    // 檢查是否使用伺服器設定（僅包含 prompt）
+    if (body.prompt && !body.baseUrl && !body.apiKey && !body.model) {
+      // 使用伺服器端環境變數設定
+      baseUrl = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
+      apiKey = process.env.OPENAI_API_KEY || '';
+      model = process.env.OPENAI_MODEL || 'gpt-3.5-turbo';
+      prompt = body.prompt;
+
+      if (!apiKey) {
+        throw new Error('伺服器未設定 API 金鑰，請使用自訂設定模式');
+      }
+    } else {
+      // 使用客戶端傳來的設定
+      const validatedData = aiGenerationSettingsSchema.parse(body);
+      baseUrl = validatedData.baseUrl;
+      apiKey = validatedData.apiKey.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+      model = validatedData.model;
+      prompt = validatedData.prompt;
+    }
 
     // 建立 OpenAI 客戶端
     const openai = new OpenAI({

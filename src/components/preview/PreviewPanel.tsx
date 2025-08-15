@@ -65,12 +65,14 @@ export function PreviewPanel({
   const marpRef = useRef<Marp | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
 
-  // 初始化 Marp 實例
+  // 初始化 Marp 實例（記憶化配置）
+  const marpConfig = useMemo(() => ({
+    html: true,
+  }), []);
+
   useEffect(() => {
     try {
-      marpRef.current = new Marp({
-        html: true,
-      });
+      marpRef.current = new Marp(marpConfig);
 
       // TODO: 設置主題 (如果需要)
     } catch (error) {
@@ -81,7 +83,7 @@ export function PreviewPanel({
         onError(error instanceof Error ? error : new Error(errorMsg));
       }
     }
-  }, [theme, onError]);
+  }, [theme, onError, marpConfig]);
 
   // 渲染 Markdown 為投影片
   const renderSlides = async (markdown: string): Promise<SlideData | null> => {

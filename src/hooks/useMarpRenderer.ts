@@ -1,7 +1,7 @@
 // ABOUTME: Marp 渲染 Hook，封裝投影片渲染邏輯和狀態管理
 // ABOUTME: 提供 debounced 渲染、錯誤處理和載入狀態控制
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { getMarpEngine } from '@/lib/marp';
 import { useDebounce } from '@/hooks/useDebounce';
 import {
@@ -70,8 +70,8 @@ export function useMarpRenderer(
     options?: Partial<MarpRenderOptions>;
   } | null>(null);
 
-  // Marp 引擎實例
-  const marpEngine = getMarpEngine();
+  // Marp 引擎實例（記憶化）
+  const marpEngine = useMemo(() => getMarpEngine(), []);
 
   // 渲染函數
   const performRender = useCallback(async (

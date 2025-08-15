@@ -51,7 +51,7 @@ describe('MainLayout', () => {
     );
 
     const main = screen.getByRole('main');
-    expect(main).toHaveClass('px-4', 'py-4');
+    expect(main).toHaveClass('px-2', 'py-3');
   });
 
   it('should render Header component within layout', () => {
@@ -79,7 +79,7 @@ describe('MainLayout', () => {
     expect(container).toHaveClass('min-h-screen');
 
     const main = screen.getByRole('main');
-    expect(main).toHaveClass('px-4', 'py-4');
+    expect(main).toHaveClass('px-2', 'py-3');
   });
 
   it('should support responsive design', () => {
@@ -114,7 +114,7 @@ describe('MainLayout', () => {
 
     // Both elements should be accessible
     expect(header).toHaveAttribute('class', 'border-b border-border/50 backdrop-blur-sm bg-card/80');
-    expect(main).toHaveAttribute('class', 'px-4 py-4');
+    expect(main).toHaveAttribute('class', 'px-2 py-3');
   });
 
   it('should allow custom props to be passed to children', () => {

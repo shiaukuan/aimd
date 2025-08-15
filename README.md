@@ -35,6 +35,9 @@
 # 安裝依賴
 pnpm install
 
+# 複製環境變數設定檔並填入您的 API 設定
+cp .env.local.example .env.local
+
 # 啟動開發伺服器
 pnpm dev
 
@@ -49,6 +52,19 @@ pnpm lint
 ```
 
 開啟 [http://localhost:3000](http://localhost:3000) 查看應用程式。
+
+### AI 功能設定
+
+要使用 AI 生成投影片功能，請：
+
+1. 複製 `.env.local.example` 為 `.env.local`
+2. 在 `.env.local` 中設定您的 API 金鑰和其他參數
+3. 重啟開發伺服器
+
+支援的 AI 服務：
+- OpenAI GPT 系列
+- GitHub Models
+- 其他 OpenAI 兼容的 API
 
 ## 專案結構
 
