@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Markdown 投影片產生器',
-  description: '使用 Markdown 輕鬆創建專業投影片',
+  description: '使用AI 生成 Markdown 投影片',
 };
 
 export default function RootLayout({

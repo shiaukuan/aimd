@@ -14,7 +14,7 @@ export function Header() {
               Markdown 投影片產生器
             </h1>
             <p className="text-muted-foreground text-xs">
-              使用 Markdown 輕鬆創建專業投影片
+              使用AI 生成 Markdown 投影片
             </p>
           </div>
         </div>
