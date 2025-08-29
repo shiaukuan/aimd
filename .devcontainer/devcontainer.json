@@ -73,8 +73,6 @@
     "NEXT_TELEMETRY_DISABLED": "1"
   },
   "containerEnv": {
-    // "http_proxy": "http://proxy.cht.com.tw:8080",
-    // "https_proxy": "http://proxy.cht.com.tw:8080",
     "no_proxy": "127.0.0.1",
     "GIT_AUTHOR_NAME": "sklee",
     "GIT_AUTHOR_EMAIL": "kuan9924501@gmail.com",
