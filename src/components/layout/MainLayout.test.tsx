@@ -64,7 +64,7 @@ describe('MainLayout', () => {
     const title = screen.getByRole('heading', { level: 1 });
     expect(title).toHaveTextContent('Markdown 投影片產生器');
 
-    const description = screen.getByText('使用 Markdown 輕鬆創建專業投影片');
+    const description = screen.getByText('使用AI 生成 Markdown 投影片');
     expect(description).toBeInTheDocument();
   });
 
